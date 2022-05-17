@@ -1,6 +1,4 @@
-# create a basic flask app
 
-from distutils.log import debug
 from flask import Flask
 PORT = 5000
 app = Flask(__name__)
