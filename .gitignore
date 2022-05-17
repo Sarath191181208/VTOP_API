@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+
+# dotfiles
+.env
+.env-dev
+.env-prod
+.env-test
+
+# folders
+_captcha
+_responses
+_test
+
+# logs and tmp
+*.log
+*.tmp
+
+# profiles
+*.prof
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
