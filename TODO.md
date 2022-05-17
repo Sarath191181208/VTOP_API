@@ -1,0 +1,2 @@
+- [ ] Create a payload object for the request. : better design.
+- [ ] Remove beautiful soup completely from the codebase.
