@@ -1,6 +1,5 @@
 
 from flask import Flask, jsonify, request
-from flask_restful import Resource, Api
 
 import asyncio
 import aiohttp
@@ -14,7 +13,6 @@ load_dotenv()
 
 PORT = 5000
 app = Flask(__name__)
-api = Api(app)
 
 import logging
 from utils import c_print
