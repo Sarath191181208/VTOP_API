@@ -1,2 +1,4 @@
+- [ ] Add a flask end point to acess these functions.
+- [ ] Write tests for the functions.
 - [ ] Create a payload object for the request. : better design.
 - [ ] Remove beautiful soup completely from the codebase.
