@@ -1,7 +1,7 @@
 
 Quick Navigation:
 - [Brief Description](#description)
-- [How to install ?]()
+- [How to install ?](#how-to-install-this-project)
 - [How does the captcha solving work ?](#how-does-the-captcha-solving-work)
 - [What if the website changes?](#change-the-vtophandler-for-any-change-in-the-vtop-website)
 
