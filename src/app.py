@@ -1,5 +1,5 @@
 
-from flask import Flask, jsonify, request, Response
+from flask import Flask, jsonify, request
 
 import asyncio
 import aiohttp
@@ -30,36 +30,38 @@ async def all_details():
         passwd = request.form.get('password', None)
         status_code = 200
 
-        if user_name is None or passwd is None:
-            data = jsonify({'error': 'username or password is empty'})
+        def _validate_input(username: str, password: str) -> bool:
+            """validates if the username and password are valid"""
+            if username is None or password is None:
+                return False
+            elif len(username) < 5 or len(password) < 3:
+                return False
+            return True
+
+        if not _validate_input(user_name, passwd):
+            data = jsonify({'error': 'username or password is invalid'})
             status_code = 400
-            return Response(data, status=status_code, mimetype='application/json')
+            return data, status_code
 
         profile, timetable, attendance, academic_history = {}, {}, {}, {}
-        try:
-            async with aiohttp.ClientSession() as sess:
-                user_name, valid = await get_valid_session(user_name,passwd, sess)
-                if valid:
-                    profile, valid = await get_student_profile(sess, user_name)
-                    timetable, valid = await get_timetable(sess, user_name)
-                    attendance, valid = await get_attendance(sess, user_name)
-                    academic_history, valid = await get_acadhistory(sess, user_name)
-                else:
-                    status_code = 401
-                    data = jsonify({'error': 'invalid username or password'})
-                    return Response(data, status=status_code, mimetype='application/json')
-        except Exception as e:
-            status_code = 500
-            print(e, e.with_traceback())
-            logging.warning(e)
-        finally:
-            return Response(jsonify({
-                'profile': profile,
-                'timetable': timetable,
-                'attendance': attendance,
-                'academic_history':academic_history
-            }), status=status_code, mimetype='application/json')
-        
+        async with aiohttp.ClientSession() as sess:
+            user_name, valid = await get_valid_session(user_name,passwd, sess)
+            if valid:
+                profile, valid = await get_student_profile(sess, user_name)
+                timetable, valid = await get_timetable(sess, user_name)
+                attendance, valid = await get_attendance(sess, user_name)
+                academic_history, valid = await get_acadhistory(sess, user_name)
+            else:
+                status_code = 401
+                data = jsonify({'error': 'invalid username or password'})
+                return data, status_code
+        return jsonify({
+            'profile': profile,
+            'timetable': timetable,
+            'attendance': attendance,
+            'academic_history':academic_history
+        }), status_code
+    
 
 if __name__ == "__main__":
     # asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
