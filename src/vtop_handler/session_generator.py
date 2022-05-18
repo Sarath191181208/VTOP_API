@@ -206,7 +206,11 @@ async def generate_session(username:str, password:str, sess:  aiohttp.ClientSess
             try:
                 soup = BeautifulSoup(post_login_html, 'lxml')
                 recaptcha_soup = soup.find_all('div', {"id": "captchaRefresh"})
-                username = soup.find('input', {"id": "authorizedIDX"})['value']
+                username = soup.find('input', {"id": "authorizedIDX"})
+                if username is not None:
+                    username = username.get('value')
+                else:
+                    valid = False
             except Exception as e:
                 print('logging in failed! with error : ', e)
                 valid = False
