@@ -66,6 +66,7 @@ async def all_details():
 if __name__ == "__main__":
     # asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     # asyncio.run(app.run(debug=True, port=PORT))
-    app.run(debug=True, port=PORT)
+    # app.run(debug=True, port=PORT)
+    app.host(host='0.0.0.0', port=PORT)
 
     

@@ -39,6 +39,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+VITAP_API_VENV/
 
 # vscode
 .vscode
