@@ -244,7 +244,7 @@ async def get_valid_session(
             True if the session is valid, False otherwise
     """
     valid = False
-    for _ in range(5):
+    for _ in range(8):
         username, valid = await generate_session(username, password, sess)
         if valid:
             break
