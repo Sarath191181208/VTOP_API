@@ -1,5 +1,5 @@
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response
 
 import asyncio
 import aiohttp
@@ -24,13 +24,16 @@ def hello_world():
 
 @app.route('/api/v1/alldetails', methods=['POST'])
 async def all_details():
-    logging.info('Request received for all details')
     if request.method == 'POST':
+
         user_name = request.form.get('username', None)
         passwd = request.form.get('password', None)
+        status_code = 200
 
         if user_name is None or passwd is None:
-            return jsonify({'error': 'username or password is empty'})
+            data = jsonify({'error': 'username or password is empty'})
+            status_code = 400
+            return Response(data, status=status_code, mimetype='application/json')
 
         profile, timetable, attendance, academic_history = {}, {}, {}, {}
         try:
@@ -41,19 +44,21 @@ async def all_details():
                     timetable, valid = await get_timetable(sess, user_name)
                     attendance, valid = await get_attendance(sess, user_name)
                     academic_history, valid = await get_acadhistory(sess, user_name)
+                else:
+                    status_code = 401
+                    data = jsonify({'error': 'invalid username or password'})
+                    return Response(data, status=status_code, mimetype='application/json')
         except Exception as e:
+            status_code = 500
             print(e, e.with_traceback())
-            logging.info(e)
+            logging.warning(e)
         finally:
-            print("-"*30)
-            print("returning resp")
-            print("#"*30)
-            return jsonify({
+            return Response(jsonify({
                 'profile': profile,
                 'timetable': timetable,
                 'attendance': attendance,
                 'academic_history':academic_history
-            })
+            }), status=status_code, mimetype='application/json')
         
 
 if __name__ == "__main__":
