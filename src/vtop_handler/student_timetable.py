@@ -20,9 +20,9 @@ Returns Timetable in a dictionary form
 """
 from typing import Tuple
 
-from vtop_handler.constants import VTOP_TIMETABLE_URL, HEADERS, SEM_IDS
-from vtop_handler.payloads import get_vtop_timetable_payload 
-from vtop_handler.parsers import parse_timetable
+from .constants import VTOP_TIMETABLE_URL, HEADERS, SEM_IDS
+from .payloads import get_vtop_timetable_payload 
+from .parsers import parse_timetable
 
 import asyncio
 import aiohttp

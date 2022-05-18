@@ -22,9 +22,9 @@ import asyncio
 
 from typing import Tuple
 
-from vtop_handler.payloads import get_vtop_profile_payload
-from vtop_handler.constants import HEADERS, VTOP_PROFILE_URL
-from vtop_handler.parsers import parse_profile
+from .payloads import get_vtop_profile_payload
+from .constants import HEADERS, VTOP_PROFILE_URL
+from .parsers import parse_profile
 
 async def get_student_profile(sess: aiohttp.ClientSession, username: str)->Tuple[dict, bool]:
     """

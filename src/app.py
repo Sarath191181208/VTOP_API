@@ -4,8 +4,8 @@ from flask import Flask, jsonify, request
 import asyncio
 import aiohttp
 
-from vtop_handler import get_valid_session, get_student_profile
-from vtop_handler import get_timetable, get_attendance, get_acadhistory
+from .vtop_handler import get_valid_session, get_student_profile
+from .vtop_handler import get_timetable, get_attendance, get_acadhistory
 
 import os
 from dotenv import load_dotenv
@@ -15,7 +15,7 @@ PORT = 5000
 app = Flask(__name__)
 
 import logging
-from utils import c_print
+from .utils import c_print
 logging.basicConfig(filename='flask_logs.log', level=logging.DEBUG)
 
 @app.route('/')
@@ -66,7 +66,7 @@ async def all_details():
 if __name__ == "__main__":
     # asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     # asyncio.run(app.run(debug=True, port=PORT))
-    # app.run(debug=True, port=PORT)
-    app.host(host='0.0.0.0', port=PORT)
+    app.run(debug=True, port=PORT)
+    # app.host(host='0.0.0.0', port=PORT)
 
     

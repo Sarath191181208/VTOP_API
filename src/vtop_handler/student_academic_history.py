@@ -21,9 +21,9 @@
 import asyncio
 import aiohttp
 
-from vtop_handler.payloads import get_vtop_academic_profile_payload
-from vtop_handler.constants import VTOP_ACADHISTORY_URL, HEADERS
-from vtop_handler.parsers import parse_acadhistory
+from .payloads import get_vtop_academic_profile_payload
+from .constants import VTOP_ACADHISTORY_URL, HEADERS
+from .parsers import parse_acadhistory
 
 async def _get_acadhistory_from_payload(sess:aiohttp.ClientSession, payload:dict):
     valid = False

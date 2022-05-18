@@ -25,7 +25,7 @@ from bs4 import BeautifulSoup
 import aiohttp
 
 from typing import Union
-from vtop_handler.constants import VTOP_DO_LOGIN_URL, VTOP_LOGIN_URL, VTOP_BASE_URL, HEADERS
+from .constants import VTOP_DO_LOGIN_URL, VTOP_LOGIN_URL, VTOP_BASE_URL, HEADERS
 
 CAPTCHA_DIM = (180, 45)
 CHARACTER_DIM = (30, 32)

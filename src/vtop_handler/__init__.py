@@ -14,13 +14,13 @@ Go to the individual package's documentation for more details.
 
 """
 
-from vtop_handler import session_generator
-from vtop_handler import student_profile
-from vtop_handler import student_timetable
-from vtop_handler import student_academic_history
+from . import session_generator
+from . import student_profile
+from . import student_timetable
+from . import student_academic_history
 
-from vtop_handler.session_generator import get_valid_session
-from vtop_handler.student_profile import get_student_profile
-from vtop_handler.student_timetable import get_timetable
-from vtop_handler.student_attendance import get_attendance
-from vtop_handler.student_academic_history import get_acadhistory
+from .session_generator import get_valid_session
+from .student_profile import get_student_profile
+from .student_timetable import get_timetable
+from .student_attendance import get_attendance
+from .student_academic_history import get_acadhistory
