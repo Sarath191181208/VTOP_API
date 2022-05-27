@@ -4,7 +4,7 @@ from flask import Flask, jsonify, request
 import asyncio
 import aiohttp
 
-from .vtop_handler import get_valid_session, get_student_profile
+from .vtop_handler import generate_session, get_student_profile
 from .vtop_handler import get_timetable, get_attendance, get_acadhistory
 
 import os
@@ -45,7 +45,7 @@ async def all_details():
 
         profile, timetable, attendance, academic_history = {}, {}, {}, {}
         async with aiohttp.ClientSession() as sess:
-            user_name, valid = await get_valid_session(user_name,passwd, sess)
+            user_name, valid = await generate_session(user_name,passwd, sess)
             if valid:
                 profile, valid = await get_student_profile(sess, user_name)
                 timetable, valid = await get_timetable(sess, user_name)

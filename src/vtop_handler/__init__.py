@@ -19,7 +19,7 @@ from . import student_profile
 from . import student_timetable
 from . import student_academic_history
 
-from .session_generator import get_valid_session
+from .session_generator import get_valid_session, generate_session
 from .student_profile import get_student_profile
 from .student_timetable import get_timetable
 from .student_attendance import get_attendance
