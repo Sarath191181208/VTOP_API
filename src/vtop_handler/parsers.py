@@ -175,7 +175,7 @@ def _clean_text(text:str)->str:
         text = text.replace(char, '')
     return text
 
-def _get_fac_detils(div:bs4.element.Tag)->dict:
+def _get_single_fac_detils(div:bs4.element.Tag)->dict:
     p_s = div.find_all('p')
     img_link = p_s[0].find_all('img')[1].get('src')
     name = p_s[1].text
@@ -192,8 +192,18 @@ def parse_faculty_details(fac_html:str)->list[dict]:
     try:
         soup = BeautifulSoup(fac_html, 'html.parser')
         res = soup.find_all('div', {'class': 'col-md-2 shadow margin-T30'})
-        fac_details = [_get_fac_detils(div) for div in res]
+        fac_details = [_get_single_fac_detils(div) for div in res]
     except Exception as e:
         print(e)
     return fac_details
-    
+
+def parse_academic_calender(acad_calender_html:str)->list[str]:
+    img_links = []
+    try:
+        soup = BeautifulSoup(acad_calender_html, "html.parser")
+        divs = soup.find_all("center")
+        _find_img = lambda div: div.find_all("img")[1].get("src")
+        img_links = [_find_img(div) for div in divs]
+    except Exception as e:
+        print(e)
+    return img_links

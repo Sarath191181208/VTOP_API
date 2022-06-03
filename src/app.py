@@ -5,9 +5,9 @@ import asyncio
 import aiohttp
 
 
-
-from .vtop_handler import generate_session, get_student_profile, get_faculty_details
+from .vtop_handler import generate_session, get_student_profile
 from .vtop_handler import get_timetable, get_attendance, get_acadhistory
+from .vtop_handler import get_academic_calender, get_faculty_details
 
 import os
 from dotenv import load_dotenv
@@ -67,6 +67,11 @@ async def all_details():
 @app.route('/api/v1/faculty', methods=['POST'])
 async def faculty():
     res = await get_faculty_details()
+    return jsonify(res)
+
+@app.route('/api/v1/academic_calenders', methods=['POST'])
+async def acad_calenders():
+    res = await get_academic_calender()
     return jsonify(res)
 
 if __name__ == "__main__":
