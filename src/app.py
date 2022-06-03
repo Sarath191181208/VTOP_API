@@ -4,7 +4,9 @@ from flask import Flask, jsonify, request
 import asyncio
 import aiohttp
 
-from .vtop_handler import generate_session, get_student_profile
+
+
+from .vtop_handler import generate_session, get_student_profile, get_faculty_details
 from .vtop_handler import get_timetable, get_attendance, get_acadhistory
 
 import os
@@ -62,6 +64,10 @@ async def all_details():
             'academic_history':academic_history
         }), status_code
     
+@app.route('/api/v1/faculty', methods=['POST'])
+async def faculty():
+    res = await get_faculty_details()
+    return jsonify(res)
 
 if __name__ == "__main__":
     # asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
