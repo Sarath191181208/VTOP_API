@@ -59,6 +59,7 @@ def _get_course_code_dic(time_table_soup:BeautifulSoup)-> dict[str, str]:
 
 def parse_timetable(timetable_html: str)-> dict[str, list]:
     """takes the html of the timetable and returns the timetable in the form of a dictionary"""
+
     soup = BeautifulSoup(timetable_html, 'lxml')
     course_code_name_dic = _get_course_code_dic(time_table_soup=soup)
 
@@ -67,7 +68,7 @@ def parse_timetable(timetable_html: str)-> dict[str, list]:
         temp_arr = str(s).strip().split("-")
         slot = temp_arr[0]
         course_code = temp_arr[1]
-        cls = temp_arr[2]+" "+temp_arr[3]
+        cls = "-".join(temp_arr[3:])
 
         return slot,course_code, cls
 
@@ -88,8 +89,10 @@ def parse_timetable(timetable_html: str)-> dict[str, list]:
         day = _temp_dic.get(str(df.iloc[row_idx, 0]), "Sunday")
 
         for col_idx in range(2, df.shape[1]):
+            cell = df.iloc[row_idx, col_idx]
+            is_cell_empty = str(cell).count('-') < 3
             # if the cell is empty without data then we skip it
-            if str(df.iloc[row_idx, col_idx]).count('-') > 2:
+            if not is_cell_empty:
                 slot, code, cls = _get_vals(df.iloc[row_idx, col_idx])
 
                 time_table[day].append({
