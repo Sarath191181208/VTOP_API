@@ -52,10 +52,15 @@ async def all_details():
                 status_code = 401
                 data = jsonify({'error': 'invalid username or password'})
                 return data, status_code
-            profile, valid = await get_student_profile(sess, user_name)
-            timetable, valid = await get_timetable(sess, user_name)
-            attendance, valid = await get_attendance(sess, user_name)
-            academic_history, valid = await get_acadhistory(sess, user_name)
+            profile_future =  get_student_profile(sess, user_name)
+            timetable_future =  get_timetable(sess, user_name)
+            attendance_future =  get_attendance(sess, user_name)
+            academic_history_future =  get_acadhistory(sess, user_name)
+            
+            profile, valid = await profile_future
+            timetable, valid = await timetable_future
+            attendance, valid = await attendance_future
+            academic_history, valid = await academic_history_future
         return jsonify({
             'profile': profile,
             'timetable': timetable,
