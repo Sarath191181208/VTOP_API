@@ -48,15 +48,14 @@ async def all_details():
         profile, timetable, attendance, academic_history = {}, {}, {}, {}
         async with aiohttp.ClientSession() as sess:
             user_name, valid = await generate_session(user_name,passwd, sess)
-            if valid:
-                profile, valid = await get_student_profile(sess, user_name)
-                timetable, valid = await get_timetable(sess, user_name)
-                attendance, valid = await get_attendance(sess, user_name)
-                academic_history, valid = await get_acadhistory(sess, user_name)
-            else:
+            if not valid:
                 status_code = 401
                 data = jsonify({'error': 'invalid username or password'})
                 return data, status_code
+            profile, valid = await get_student_profile(sess, user_name)
+            timetable, valid = await get_timetable(sess, user_name)
+            attendance, valid = await get_attendance(sess, user_name)
+            academic_history, valid = await get_acadhistory(sess, user_name)
         return jsonify({
             'profile': profile,
             'timetable': timetable,
