@@ -13,6 +13,8 @@ from src.vtop_handler import generate_session, get_student_profile
 from src.vtop_handler import get_timetable, get_attendance, get_acadhistory
 from src.vtop_handler import get_academic_calender, get_faculty_details
 
+from src.validators import is_valid_username_password
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -35,15 +37,7 @@ async def all_details():
         passwd = request.form.get('password', None)
         status_code = 200
 
-        def _validate_input(username: str, password: str) -> bool:
-            """validates if the username and password are valid"""
-            if username is None or password is None:
-                return False
-            elif len(username) < 5 or len(password) < 3:
-                return False
-            return True
-
-        if not _validate_input(user_name, passwd):
+        if not is_valid_username_password(user_name, passwd):
             data = jsonify({'error': 'username or password is invalid'})
             status_code = 400
             return data, status_code
