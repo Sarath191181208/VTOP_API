@@ -3,13 +3,16 @@ from flask import Flask, jsonify, request
 
 import asyncio
 import aiohttp
-
-
-from .vtop_handler import generate_session, get_student_profile
-from .vtop_handler import get_timetable, get_attendance, get_acadhistory
-from .vtop_handler import get_academic_calender, get_faculty_details
-
+import sys
 import os
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
+
+from src.vtop_handler import generate_session, get_student_profile
+from src.vtop_handler import get_timetable, get_attendance, get_acadhistory
+from src.vtop_handler import get_academic_calender, get_faculty_details
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -17,7 +20,7 @@ PORT = 5000
 app = Flask(__name__)
 
 import logging
-from .utils import c_print
+from src.utils import c_print
 logging.basicConfig(filename='flask_logs.log', level=logging.DEBUG)
 
 @app.route('/')
