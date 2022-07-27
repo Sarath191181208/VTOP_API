@@ -64,8 +64,8 @@ async def all_details():
                     k: await d_future 
                     for k, d_future in all_details_futures.items()
                 }
-        except InvalidCredentialsException as upe:
-            return jsonify({"Error": upe.msg}), upe.status_code
+        except InvalidCredentialsException as ICexception:
+            return jsonify({"Error": ICexception.msg}), ICexception.status_code
         return jsonify(all_detials), status_code
     
 @app.route('/api/v1/faculty', methods=['POST'])
