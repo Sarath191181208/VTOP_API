@@ -103,7 +103,7 @@ async def get_timetable(
     
     valid = False
     time_table = {}
-    for semID in set(*SEM_IDS):
+    for semID in set(SEM_IDS):
         payload = get_vtop_timetable_payload(username, semID)
         time_table, valid = await _get_time_table_from_payload(sess, payload)
         if valid:

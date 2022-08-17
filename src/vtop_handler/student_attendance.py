@@ -88,7 +88,7 @@ async def get_attendance(sess, username, semesterID=None):
     # TODO implement a semID implementation.
     valid = False
     attendance = {}
-    for semID in set(*SEM_IDS):
+    for semID in set(SEM_IDS):
         payload = get_vtop_attendance_payload(username, semID)
         attendance, valid = await _get_attendance_from_payload(sess, payload)
         if valid:
