@@ -49,7 +49,6 @@ async def all_details():
         try: 
             user_name = request.form.get('username', None)
             passwd = request.form.get('password', None)
-            status_code = 200
 
             if not is_valid_username_password(user_name, passwd):
                 raise InvalidCredentialsException(status_code=400)
@@ -61,11 +60,13 @@ async def all_details():
                 all_details_futures = get_all_details_futures(sess, user_name)
                 # awaiting all details to arrive and converting to dict
                 all_detials = {
-                    k: await d_future 
+                    k: (await d_future)[0]
                     for k, d_future in all_details_futures.items()
                 }
         except InvalidCredentialsException as ICexception:
             return jsonify({"Error": ICexception.msg}), ICexception.status_code
+
+        status_code = 200
         return jsonify(all_detials), status_code
     
 @app.route('/api/v1/faculty', methods=['POST'])
