@@ -1,7 +1,7 @@
 import aiohttp
 import asyncio
 
-from vtop_handler import get_valid_session, get_student_profile
+from vtop_handler import generate_session, get_student_profile
 from vtop_handler import  get_timetable, get_attendance, get_acadhistory
 
 async def main():
@@ -12,7 +12,7 @@ async def main():
     passwd = os.getenv('VTOP_PASSWORD')
 
     async with aiohttp.ClientSession() as sess:
-        user_name, valid = await get_valid_session(user_name,passwd, sess)
+        user_name, valid = await generate_session(user_name,passwd, sess)
         if valid:
             profile, valid = await get_student_profile(sess, user_name)
             timetable, valid = await get_timetable(sess, user_name)
@@ -23,6 +23,7 @@ async def main():
             print(timetable)
             print(attendance)
             print(academic_history)
+        print("Invalid info!")
 
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 asyncio.run(main())
