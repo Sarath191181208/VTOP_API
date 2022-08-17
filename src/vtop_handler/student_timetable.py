@@ -53,7 +53,7 @@ async def _get_time_table_from_payload(sess:aiohttp.ClientSession, payload:dict)
 async def get_timetable(
     sess: aiohttp.ClientSession, 
     username: str,
-    semesterID: str ="AP2021226") -> Tuple[
+    semesterID: str = None) -> Tuple[
         dict,  # timetable
         bool]: # valid i.e sucess of the session
     """
@@ -99,9 +99,11 @@ async def get_timetable(
             whether the request was successful or not
     """
 
+    # TODO calling the api with the semesterID is to be implemented
+    
     valid = False
     time_table = {}
-    for semID in set((semesterID, *SEM_IDS)):
+    for semID in set(*SEM_IDS):
         payload = get_vtop_timetable_payload(username, semID)
         time_table, valid = await _get_time_table_from_payload(sess, payload)
         if valid:
