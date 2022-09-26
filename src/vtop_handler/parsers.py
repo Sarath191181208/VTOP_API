@@ -9,7 +9,10 @@ import bs4
 import pandas as pd
 from bs4 import BeautifulSoup
 
+from .utils import find_image
+
 def parse_profile(profile_html: str)-> dict:
+    base64_img = find_image(profile_html)
     raw_df = pd.read_html(profile_html)
     df_personal_info = raw_df[0]
     df_proctor_info = raw_df[3]
@@ -32,6 +35,7 @@ def parse_profile(profile_html: str)-> dict:
         "email" : df_personal_info.iloc[31, 1],
         "proctorEmail" : df_proctor_info.iloc[7 , 1],
         "proctorName": df_proctor_info.iloc[2 , 1],
+        "profileImageBase64": base64_img,
         'token': token
     }
 
