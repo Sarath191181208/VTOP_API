@@ -25,6 +25,8 @@ from bs4 import BeautifulSoup
 import aiohttp
 
 from typing import Union
+
+from .utils import find_image
 from .constants import VTOP_DO_LOGIN_URL, VTOP_LOGIN_URL, VTOP_BASE_URL, HEADERS
 
 CAPTCHA_DIM = (180, 45)
@@ -107,23 +109,6 @@ def _solve_captcha(img: PIL.Image) -> Union[str, None]:
         print(e)
     return captcha
 
-def _find_captcha(login_html:str) -> Union[str, None]:
-    """finds the captcha image in the login page"""
-
-    start_idx = login_html.find('src="data:image/png;base64,')
-    if start_idx == -1: # i.e no captcha found
-        return None
-
-    # taking the data in the src with the other html data
-    alt_text = login_html[start_idx+len('src="') :] 
-
-    # finding where the src quote ends
-    end_idx = alt_text.find('"')
-
-    # taking the image data from the src
-    captcha_src = alt_text[:end_idx].replace('data:image/png;base64, ', '')
-    return captcha_src
-
 def _remove_pixel_noise(img):
     """
     this function removes the one pixel noise in the captcha
@@ -184,7 +169,7 @@ async def generate_session(username:str, password:str, sess:  aiohttp.ClientSess
         login_html = await resp.text()
         # login_html = await sess.post(VTOP_LOGIN_URL,headers = HEADERS)
         # finding the captcha image form the login page
-        captcha_src = _find_captcha(login_html)
+        captcha_src = find_image(login_html)
         # return if no captcha found
         if captcha_src is None: return (None, None, False)
         # converting the captcha string to a PIL image
