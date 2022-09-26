@@ -1,19 +1,26 @@
+import re
 from typing import Union
 
 
-def find_image(login_html:str) -> Union[str, None]:
-    """finds the captcha image in the login page"""
+def find_image(html_str:str) -> Union[str, None]:
+    """
+    finds the captcha base64 image in the given html
+    
+    Explanation:
+    ------------
 
-    start_idx = login_html.find('src="data:image/png;base64,')
-    if start_idx == -1: # i.e no captcha found
-        return None
+    pattern is like this:
+        > src="data:.*;base64,(.*?)"
+        ----------------------------
+        - src="data: # matches this particular string 
+        - .* # matches any character any number of times
+        - ;base64, # matches this particular string
+        - (.*?) # matches any character any number of times and stores it in a group
 
-    # taking the data in the src with the other html data
-    alt_text = login_html[start_idx+len('src="') :] 
-
-    # finding where the src quote ends
-    end_idx = alt_text.find('"')
-
-    # taking the image data from the src
-    captcha_src = alt_text[:end_idx].replace('data:image/png;base64, ', '')
-    return captcha_src
+    then we are using the group 1 to get the base64 image
+    """
+    img_pattern = re.compile(r'src="data:.*;base64,(.*?)"')
+    img = re.search(img_pattern, html_str)
+    if img:
+        return img.group(1)
+    return None
