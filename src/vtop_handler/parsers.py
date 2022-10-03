@@ -12,7 +12,8 @@ from bs4 import BeautifulSoup
 from .utils import find_image
 
 def parse_profile(profile_html: str)-> dict:
-    base64_img = find_image(profile_html)
+    img_col = BeautifulSoup(profile_html, 'lxml').find(id = '1a')
+    base64_img = find_image(str(img_col))
     raw_df = pd.read_html(profile_html)
     df_personal_info = raw_df[0]
     df_proctor_info = raw_df[3]
