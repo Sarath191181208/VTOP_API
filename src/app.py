@@ -14,7 +14,8 @@ from src.vtop_handler import get_timetable, get_attendance, get_acadhistory
 from src.vtop_handler import get_academic_calender, get_faculty_details
 
 from src.validators import is_valid_username_password
-from src.custom_exceptions import InvalidCredentialsException
+
+from src.vtop_handler.Exceptions import InvalidCredentialsException
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -54,9 +55,7 @@ async def all_details():
                 raise InvalidCredentialsException(status_code=400)
 
             async with aiohttp.ClientSession() as sess:
-                user_name, valid = await generate_session(user_name,passwd, sess)
-                if not valid:
-                    raise InvalidCredentialsException(status_code=401)
+                user_name = await generate_session(user_name,passwd, sess)
                 all_details_futures = get_all_details_futures(sess, user_name)
                 # awaiting all details to arrive and converting to dict
                 all_detials = {
@@ -65,9 +64,11 @@ async def all_details():
                 }
         except InvalidCredentialsException as ICexception:
             return jsonify({"Error": ICexception.msg}), ICexception.status_code
+        except Exception as e:
+            logging.exception(e)
+            return jsonify({"Error": "Internal Server Error"}), 500
 
-        status_code = 200
-        return jsonify(all_detials), status_code
+        return jsonify(all_detials), 200
     
 @app.route('/api/v1/faculty', methods=['POST'])
 async def faculty():

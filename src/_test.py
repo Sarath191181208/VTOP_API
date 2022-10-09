@@ -12,19 +12,18 @@ async def main():
     passwd = os.getenv('VTOP_PASSWORD_JR')
 
     async with aiohttp.ClientSession() as sess:
-        user_name, valid = await generate_session(user_name,passwd, sess)
-        if valid:
-            profile, valid = await get_student_profile(sess, user_name)
-            timetable, valid = await get_timetable(sess, user_name)
-            attendance, valid = await get_attendance(sess, user_name)
-            academic_history, valid = await get_acadhistory(sess, user_name)
+        user_name = await generate_session(user_name,passwd, sess)
+        profile, valid = await get_student_profile(sess, user_name)
+        timetable, valid = await get_timetable(sess, user_name)
+        attendance, valid = await get_attendance(sess, user_name)
+        academic_history, valid = await get_acadhistory(sess, user_name)
 
-            print(profile)
-            print(timetable)
-            print(attendance)
-            print(academic_history)
-        else:
-            print("Login Failed")
+        print(profile)
+        print(timetable)
+        print(attendance)
+        print(academic_history)
+        # else:
+        #     print("Login Failed")
 
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 asyncio.run(main())

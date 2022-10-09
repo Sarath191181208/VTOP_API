@@ -28,6 +28,9 @@ import aiohttp
 
 from typing import Union
 
+from .Exceptions.captcha_failure import CaptchaFailure
+from .Exceptions.invalid_credentials import InvalidCredentialsException
+
 from .utils import find_image
 from .constants import VTOP_DO_LOGIN_URL, VTOP_LOGIN_URL, VTOP_BASE_URL, HEADERS
 
@@ -105,9 +108,7 @@ def _solve_captcha(img: np.ndarray) -> Union[str, None]:
         print(e)
     return captcha
 
-async def generate_session(username:str, password:str, sess:  aiohttp.ClientSession) -> tuple[
-        Union[str, None],              # username
-        bool]:                         # valid
+async def generate_session(username:str, password:str, sess:  aiohttp.ClientSession) -> Union[str, None]:            # username:
     """
         This function generates a session with VTOP. Solves captcha
         
@@ -126,8 +127,6 @@ async def generate_session(username:str, password:str, sess:  aiohttp.ClientSess
             Session object with the session
         - username : str | None
             Username of the user
-        - valid : bool
-            True if the session is valid, False otherwise
     """
 
     # going to the main page without this we will get the following response
@@ -153,23 +152,27 @@ async def generate_session(username:str, password:str, sess:  aiohttp.ClientSess
         }
         async with sess.post(VTOP_DO_LOGIN_URL, data = payload, headers = HEADERS) as resp:
             post_login_html = await resp.text()
-            valid = True
-            
-            try:
-                soup = BeautifulSoup(post_login_html, 'lxml')
-                recaptcha_soup = soup.find_all('div', {"id": "captchaRefresh"})
-                username = soup.find('input', {"id": "authorizedIDX"})
-                if username is not None:
-                    username = username.get('value')
-                else:
-                    valid = False
-            except Exception as e:
-                print('logging in failed! with error : ', e)
-                valid = False
-            finally:
-                if(len(recaptcha_soup)>0): # i.e if the captcha isn't solved
-                    valid = False
-                return (username, valid)
+            with open("post_login_success.html", "w") as f:
+                f.write(post_login_html)
+
+            soup = BeautifulSoup(post_login_html, 'lxml')
+
+            invalid_credentials = soup.find('p', {"class": "box-title text-danger"})
+            print(invalid_credentials)
+            if invalid_credentials is not None:
+                raise InvalidCredentialsException(401)
+
+            recaptcha_soup = soup.find_all('a', {"class": "btn btn-success pull-right"})
+            if(len(recaptcha_soup) > 0): # i.e if the captcha isn't solved
+                print(recaptcha_soup)
+                raise CaptchaFailure("Captcha not solved")
+
+            username = soup.find('input', {"id": "authorizedIDX"})
+            if username is None:
+                raise InvalidCredentialsException(401)
+
+            username = username.get('value')
+            return username
 
 async def get_valid_session(
     username: str, 
