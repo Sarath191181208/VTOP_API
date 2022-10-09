@@ -16,7 +16,6 @@
 import io
 import os
 
-import PIL
 import json
 import base64
 import cv2
@@ -139,7 +138,7 @@ async def generate_session(username:str, password:str, sess:  aiohttp.ClientSess
         captcha_src = find_image(login_html)
         # return if no captcha found
         if captcha_src is None: return (None, None, False)
-        # converting the captcha string to a PIL image
+        # converting the captcha string to a image
         captcha_img = _str_to_img(captcha_src)
         # solving the captcha
         captcha = _solve_captcha(captcha_img)
