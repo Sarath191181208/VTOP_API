@@ -19,7 +19,8 @@ import os
 import PIL
 import json
 import base64
-from PIL import Image
+import cv2
+import numpy as np
 from bs4 import BeautifulSoup
 
 import aiohttp
@@ -36,34 +37,25 @@ CHARACTER_DIM = (30, 32)
 curr_dir = os.path.dirname(__file__)
 bitmaps_path = os.path.join(curr_dir, 'bitmaps.json')
 BITMAPS = json.load(open(bitmaps_path))
+BITMAPS = {k: np.array(v) for k, v in BITMAPS.items()}
 
-def _img_match_percentage(img_char_matrix, char_matrix) -> float:
+def _img_match_percentage(img_char_matrix: np.ndarray, char_matrix: np.ndarray) -> float:
     """
     This function returns the percentage of matching pixels between two images
     """
-    char_width, char_height = CHARACTER_DIM
+
     match_count = 1
     mismatch_count = 1
 
-    _is_black = lambda val : val == 0
-    _is_white = lambda val : val == 255
-    # iterating throught the entire image
-    for y in range(char_height):
-        for x in range(char_width):
-            # temp vars to store the pixel values
-            _char_pixel = char_matrix[y][x]
-            _img_pixel = img_char_matrix[x, y]
-            # both char and img pixel match with them being black
-            if _is_black(_char_pixel) and _img_pixel == _char_pixel:
-                match_count += 1
-            # since white is the background, we count it as mismatch
-            if _is_white(_img_pixel):
-                mismatch_count += 1
+    match_count = np.sum(img_char_matrix == char_matrix)
+    w, h = img_char_matrix.shape
+    mismatch_count = w*h - match_count
+
     # calculating the percentage of matching pixels
     percent_match = match_count / mismatch_count
     return percent_match 
 
-def _identify_chars(img: PIL.Image)-> str:
+def _identify_chars(img: np.ndarray)-> str:
     """
     This function identifies and returns the captcha
     """
@@ -71,18 +63,14 @@ def _identify_chars(img: PIL.Image)-> str:
     img_width, img_height = CAPTCHA_DIM
     char_width, char_height = CHARACTER_DIM
 
-    char_crop_threshold = {'upper': 12, 'lower': 44}
+    up_thresh, low_thresh = 12, 44
     # helper function to crop the image
-    _crop_img = lambda img, x, width : img.crop((x, char_crop_threshold['upper'], x+width, char_crop_threshold['lower']))
         
     captcha =""
 
     # loop through individual characters
     for i in range(0, img_width, char_width):
-        # crop the particular character
-        cropped_img = _crop_img(img, x = i, width=char_width).convert('L')
-        # loading the image for pixel operations
-        img_char_matrix = cropped_img.load()
+        img_char_matrix = img[up_thresh:low_thresh, i: i+char_width]
         # caluculating the matching percentage
         matches = {}
         global BITMAPS
@@ -96,7 +84,13 @@ def _identify_chars(img: PIL.Image)-> str:
     print(captcha)
     return captcha
 
-def _solve_captcha(img: PIL.Image) -> Union[str, None]:
+def _str_to_img(src: str) -> np.ndarray:
+    # decoding the base64 string i.e string -> bytes -> image
+    im = base64.b64decode(src)
+    img = cv2.imdecode(np.frombuffer(im, np.uint8), cv2.IMREAD_GRAYSCALE)
+    return img
+
+def _solve_captcha(img: np.ndarray) -> Union[str, None]:
     """solves the captcha and returns the solution if solved else returns None"""
 
     if img is None:
@@ -108,33 +102,6 @@ def _solve_captcha(img: PIL.Image) -> Union[str, None]:
     except Exception as e:
         print(e)
     return captcha
-
-def _remove_pixel_noise(img):
-    """
-    this function removes the one pixel noise in the captcha
-    """
-    img_width = CAPTCHA_DIM[0]
-    img_height = CAPTCHA_DIM[1]
-
-    img_matrix = img.convert('L').load()
-    # Remove noise and make image binary
-    for y in range(1, img_height - 1):
-        for x in range(1, img_width - 1):
-            if img_matrix[x, y-1] == 255 and img_matrix[x, y] == 0 and img_matrix[x, y+1] == 255:
-                img_matrix[x, y] = 255
-            if img_matrix[x-1, y] == 255 and img_matrix[x, y] == 0 and img_matrix[x+1, y] == 255:
-                img_matrix[x, y] = 255
-            if img_matrix[x, y] != 255 and img_matrix[x, y] != 0:
-                img_matrix[x, y] = 255
-
-    return img_matrix
-
-def _str_to_img(src: str) -> PIL.Image:
-    # decoding the base64 string i.e string -> bytes -> image
-    im = base64.b64decode(src)
-    # converting the image to PIL format
-    img = PIL.Image.open(io.BytesIO(im))
-    return img
 
 async def generate_session(username:str, password:str, sess:  aiohttp.ClientSession) -> tuple[
         Union[str, None],              # username
@@ -174,8 +141,6 @@ async def generate_session(username:str, password:str, sess:  aiohttp.ClientSess
         if captcha_src is None: return (None, None, False)
         # converting the captcha string to a PIL image
         captcha_img = _str_to_img(captcha_src)
-        # filtering the noise in the image and converting it to binary
-        _remove_pixel_noise(captcha_img)
         # solving the captcha
         captcha = _solve_captcha(captcha_img)
         # doing the login
