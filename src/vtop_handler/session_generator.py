@@ -152,8 +152,6 @@ async def generate_session(username:str, password:str, sess:  aiohttp.ClientSess
         }
         async with sess.post(VTOP_DO_LOGIN_URL, data = payload, headers = HEADERS) as resp:
             post_login_html = await resp.text()
-            with open("post_login_success.html", "w") as f:
-                f.write(post_login_html)
 
             soup = BeautifulSoup(post_login_html, 'lxml')
 
