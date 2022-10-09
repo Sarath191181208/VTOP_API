@@ -4,6 +4,6 @@ flask==2.1.2
 flask[async]
 gunicorn==20.1.0
 lxml==4.8.0
-opencv-python==4.6.0.66
 pandas==1.4.2
+Pillow==9.2.0
 python-dotenv==0.20.0

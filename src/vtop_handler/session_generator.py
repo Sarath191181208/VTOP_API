@@ -18,9 +18,11 @@ import os
 
 import json
 import base64
-import cv2
 import numpy as np
 from bs4 import BeautifulSoup
+
+import PIL
+from PIL import Image
 
 import aiohttp
 
@@ -86,7 +88,8 @@ def _identify_chars(img: np.ndarray)-> str:
 def _str_to_img(src: str) -> np.ndarray:
     # decoding the base64 string i.e string -> bytes -> image
     im = base64.b64decode(src)
-    img = cv2.imdecode(np.frombuffer(im, np.uint8), cv2.IMREAD_GRAYSCALE)
+    img = Image.open(io.BytesIO(im)).convert("L")
+    img = np.array(img)
     return img
 
 def _solve_captcha(img: np.ndarray) -> Union[str, None]:

@@ -49,12 +49,10 @@ multidict==6.0.2
     #   aiohttp
     #   yarl
 numpy==1.23.3
-    # via
-    #   opencv-python
-    #   pandas
-opencv-python==4.6.0.66
-    # via -r .\requirements.in
+    # via pandas
 pandas==1.4.2
+    # via -r .\requirements.in
+pillow==9.2.0
     # via -r .\requirements.in
 python-dateutil==2.8.2
     # via pandas
