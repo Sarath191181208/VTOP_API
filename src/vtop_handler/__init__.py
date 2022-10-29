@@ -20,6 +20,7 @@ from . import student_timetable
 from . import student_academic_history
 from . import faculty_handler
 from . import academic_calender_handler
+from . import student_exam_schedule
 
 from .session_generator import get_valid_session, generate_session
 from .student_profile import get_student_profile
@@ -28,3 +29,4 @@ from .student_attendance import get_attendance
 from .student_academic_history import get_acadhistory
 from .faculty_handler import get_faculty_details
 from .academic_calender_handler import get_academic_calender
+from .student_exam_schedule import get_exam_schedule

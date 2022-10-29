@@ -6,6 +6,7 @@ VTOP_TIMETABLE_URL = r"https://vtop2.vitap.ac.in/vtop/processViewTimeTable"
 VTOP_ACADHISTORY_URL = r"https://vtop2.vitap.ac.in/vtop/examinations/examGradeView/StudentGradeHistory"
 VTOP_PROFILE_URL = r"https://vtop2.vitap.ac.in/vtop/studentsRecord/StudentProfileAllView"
 VTOP_MARKS_URL = r"https://vtop2.vitap.ac.in/vtop/examinations/doStudentMarkView"
+VTOP_EXAM_SCHEDULE_URL = r"https://vtop2.vitap.ac.in/vtop/examinations/doSearchExamScheduleForStudent"
 VTOP_FACULTY_URL = r'https://vitap.ac.in/faculty/'
 VTOP_ACAD_CALENDER_URL = r'https://vitap.ac.in/academic-calendar/'
 

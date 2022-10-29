@@ -12,6 +12,7 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 from src.vtop_handler import generate_session, get_student_profile
 from src.vtop_handler import get_timetable, get_attendance, get_acadhistory
 from src.vtop_handler import get_academic_calender, get_faculty_details
+from src.vtop_handler import get_exam_schedule
 
 from src.validators import is_valid_username_password
 
@@ -62,6 +63,28 @@ async def all_details():
                     k: (await d_future)[0]
                     for k, d_future in all_details_futures.items()
                 }
+        except InvalidCredentialsException as ICexception:
+            return jsonify({"Error": ICexception.msg}), ICexception.status_code
+        except Exception as e:
+            logging.exception(e)
+            return jsonify({"Error": "Internal Server Error"}), 500
+
+        return jsonify(all_detials), 200
+    
+@app.route('/api/v1/exam_schedule', methods=['POST'])
+async def exam_schedule():
+    if request.method == 'POST':
+        try: 
+            user_name = request.form.get('username', None)
+            passwd = request.form.get('password', None)
+
+            if not is_valid_username_password(user_name, passwd):
+                raise InvalidCredentialsException(status_code=400)
+
+            async with aiohttp.ClientSession() as sess:
+                user_name = await generate_session(user_name,passwd, sess)
+                all_detials, is_valid = await get_exam_schedule(sess, user_name)
+
         except InvalidCredentialsException as ICexception:
             return jsonify({"Error": ICexception.msg}), ICexception.status_code
         except Exception as e:

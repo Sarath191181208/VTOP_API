@@ -24,3 +24,9 @@ def find_image(html_str:str) -> Union[str, None]:
     if img:
         return img.group(1)
     return None
+
+null_if_dash = lambda x: None if x == "-" else x
+
+def is_int(s: str) -> bool:
+    try: int(s); return True
+    except: return False

@@ -31,3 +31,8 @@ get_vtop_academic_profile_payload = lambda username:{
         "authorizedID": username,
         "nocache" : "@(new Date().getTime())"   
 }
+
+get_vtop_exam_schedule_payload = lambda username, semId : {
+        "semesterSubId" : semId,
+        "authorizedID" : username,
+}
