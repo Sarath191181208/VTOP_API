@@ -221,7 +221,7 @@ def parse_academic_calender(acad_calender_html:str)->list[str]:
 
 
 def get_exam_row_data(row):
-    return({
+    data = {
         "Course Code": row[1],
         "Course Title": row[2],
         "Class ID": row[4],
@@ -233,7 +233,10 @@ def get_exam_row_data(row):
         "Venue Room":   null_if_dash(row[11]),
         "Seat Location":null_if_dash(row[12]),
         "Seat No":      null_if_dash(row[13]),
-    })
+    }
+    #  connvert  NaN to None
+    data =  {k: None if pd.isna(v) else v for k, v in data.items()}
+    return data
 
 def parse_exam_schedule(exam_schedule_html: str) -> dict:
     dfs = pd.read_html(exam_schedule_html)
