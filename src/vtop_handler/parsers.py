@@ -38,6 +38,7 @@ def parse_profile(profile_html: str)-> dict:
         "email" : df_personal_info.iloc[31, 1],
         "proctorEmail" : df_proctor_info.iloc[7 , 1],
         "proctorName": df_proctor_info.iloc[2 , 1],
+        "proctorMobileNumber": df_proctor_info.iloc[9, 2],
         "profileImageBase64": base64_img,
         'token': token
     }
