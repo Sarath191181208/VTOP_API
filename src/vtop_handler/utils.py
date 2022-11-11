@@ -1,5 +1,6 @@
 import re
 from typing import Union
+import pandas as pd
 
 
 def find_image(html_str:str) -> Union[str, None]:
@@ -30,3 +31,9 @@ null_if_dash = lambda x: None if x == "-" else x
 def is_int(s: str) -> bool:
     try: int(s); return True
     except: return False
+
+def nan_to_none_in_dict(x:dict) -> dict:
+    """
+    converts all the nan values to None in the given dict
+    """
+    return {k: None if pd.isna(v) else v for k,v in x.items()}

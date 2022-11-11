@@ -10,7 +10,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from collections import defaultdict
 
-from .utils import find_image
+from .utils import find_image, nan_to_none_in_dict
 from .utils import is_int, null_if_dash
 
 def parse_profile(profile_html: str)-> dict:
@@ -36,7 +36,7 @@ def parse_profile(profile_html: str)-> dict:
     temptoken = base64.b64encode(api_token)
     token = temptoken.decode('ascii')
 
-    return {
+    return nan_to_none_in_dict({
         "name": df_personal_info.iloc[2, 1],
         "branch": df_personal_info.iloc[20, 1],
         "program" : df_personal_info.iloc[19, 1],
@@ -49,7 +49,7 @@ def parse_profile(profile_html: str)-> dict:
         "proctorMobileNumber": proctorMobileNumber,
         "profileImageBase64": base64_img,
         'token': token
-    }
+    })
 
 def _get_course_code_dic(time_table_soup:BeautifulSoup)-> dict[str, str]:
     """ creating a dictionary of course code and course name ex: 
