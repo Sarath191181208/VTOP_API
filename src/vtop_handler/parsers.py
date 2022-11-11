@@ -21,6 +21,14 @@ def parse_profile(profile_html: str)-> dict:
     df_proctor_info = raw_df[3]
 
     application_number = df_personal_info.iloc[1, 1]
+
+    # getting proctor info   
+    proctorMobileNumber = None
+    try:
+        proctorMobileNumber = df_proctor_info.iloc[9, 2]
+    except IndexError:
+        ...
+
     
     # Generating an API Token
     api_gen = application_number
@@ -38,7 +46,7 @@ def parse_profile(profile_html: str)-> dict:
         "email" : df_personal_info.iloc[31, 1],
         "proctorEmail" : df_proctor_info.iloc[7 , 1],
         "proctorName": df_proctor_info.iloc[2 , 1],
-        "proctorMobileNumber": df_proctor_info.iloc[9, 2],
+        "proctorMobileNumber": proctorMobileNumber,
         "profileImageBase64": base64_img,
         'token': token
     }
