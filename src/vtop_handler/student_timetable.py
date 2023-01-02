@@ -19,6 +19,7 @@ Returns Timetable in a dictionary form
 
 """
 from typing import Tuple
+import traceback
 
 from .constants import VTOP_TIMETABLE_URL, HEADERS, SEM_IDS
 from .payloads import get_vtop_timetable_payload 
@@ -43,6 +44,8 @@ async def _get_time_table_from_payload(sess:aiohttp.ClientSession, payload:dict)
                 time_table = parse_timetable(timetable_html)
                 valid = True
             except Exception as e:
+                traceback.print_exc()
+                
                 print(f"payload: {payload}")
                 print("Error in parsing the timetable with error: ", e)
         else:

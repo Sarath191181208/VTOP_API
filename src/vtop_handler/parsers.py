@@ -106,12 +106,11 @@ def parse_timetable(timetable_html: str)-> dict[str, list]:
 
         for col_idx in range(2, df.shape[1]):
             cell = df.iloc[row_idx, col_idx]
-            cell_str = str(cell)
-            is_cell_empty = cell_str.count('-') < 3 or len(cell_str) <= 3
+            cell_str = str(cell).strip()
+            is_cell_empty = cell_str.count('-') < 3 or len(cell_str) <= 3 or all([char == '-' for char in cell_str])
             # if the cell is empty without data then we skip it
             if not is_cell_empty:
                 slot, code, cls = _get_vals(df.iloc[row_idx, col_idx])
-
                 time_table[day].append({
                     "slot": slot,
                     "courseName": course_code_name_dic[code],
