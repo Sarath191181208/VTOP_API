@@ -18,7 +18,7 @@ Returns Timetable in a dictionary form
     >     asyncio.run(main())
 
 """
-from typing import Tuple
+from typing import Dict, Tuple
 import traceback
 
 from .constants import VTOP_TIMETABLE_URL, HEADERS, SEM_IDS
@@ -28,7 +28,7 @@ from .parsers import parse_timetable
 import asyncio
 import aiohttp
 
-async def _get_time_table_from_payload(sess:aiohttp.ClientSession, payload:dict) -> Tuple[dict, bool]:
+async def _get_time_table_from_payload(sess:aiohttp.ClientSession, payload: Dict) -> Tuple[Dict, bool]:
     """
         Returns the timetable of the user in the form of a dictionary using the payload given
         which is mentioned above in the file containing this function.
@@ -57,7 +57,7 @@ async def get_timetable(
     sess: aiohttp.ClientSession, 
     username: str,
     semesterID: str = None) -> Tuple[
-        dict,  # timetable
+        Dict,  # timetable
         bool]: # valid i.e sucess of the session
     """
         Gets the timetable of the user for the given semesterID using the given session & username

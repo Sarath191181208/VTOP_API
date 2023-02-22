@@ -1,5 +1,5 @@
 import re
-from typing import Union
+from typing import Dict, Union
 import pandas as pd
 
 
@@ -32,7 +32,7 @@ def is_int(s: str) -> bool:
     try: int(s); return True
     except: return False
 
-def nan_to_none_in_dict(x:dict) -> dict:
+def nan_to_none_in_dict(x: Dict) -> Dict:
     """
     converts all the nan values to None in the given dict
     """

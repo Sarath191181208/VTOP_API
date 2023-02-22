@@ -5,7 +5,7 @@
 
 import datetime
 import base64
-from typing import List
+from typing import Dict, List
 import bs4
 import pandas as pd
 from bs4 import BeautifulSoup
@@ -14,7 +14,7 @@ from collections import defaultdict
 from .utils import find_image, nan_to_none_in_dict
 from .utils import is_int, null_if_dash
 
-def parse_profile(profile_html: str)-> dict:
+def parse_profile(profile_html: str)-> Dict:
     img_col = BeautifulSoup(profile_html, 'lxml').find(id = '1a')
     base64_img = find_image(str(img_col))
     raw_df = pd.read_html(profile_html)
@@ -52,7 +52,7 @@ def parse_profile(profile_html: str)-> dict:
         'token': token
     })
 
-def _get_course_code_dic(time_table_soup:BeautifulSoup)-> dict[str, str]:
+def _get_course_code_dic(time_table_soup:BeautifulSoup)-> Dict[str, str]:
     """ creating a dictionary of course code and course name ex: 
         {
             "ECE4008": "Computer Communication",
@@ -74,7 +74,7 @@ def _get_course_code_dic(time_table_soup:BeautifulSoup)-> dict[str, str]:
     
     return course_code_name_dic
 
-def parse_timetable(timetable_html: str)-> dict[str, List]:
+def parse_timetable(timetable_html: str)-> Dict[str, List]:
     """takes the html of the timetable and returns the timetable in the form of a dictionary"""
 
     soup = BeautifulSoup(timetable_html, 'lxml')
@@ -123,7 +123,7 @@ def parse_timetable(timetable_html: str)-> dict[str, List]:
 
     return time_table
 
-def parse_attendance(attendance_html: str) -> dict[str, dict] :
+def parse_attendance(attendance_html: str) -> Dict[str, Dict] :
     """
         Parses the attendance html and returns a dictionary of attendance details.
         :check student attendance.py for more details on the structure of the dictionary.
@@ -153,7 +153,7 @@ def parse_attendance(attendance_html: str) -> dict[str, dict] :
     # print(attendace_dict)
     return attendace_dict
 
-def parse_acadhistory(acad_html: str)-> dict[str, List]:
+def parse_acadhistory(acad_html: str)-> Dict[str, List]:
 
     # if the student has no academic history 
     soup = BeautifulSoup(acad_html, "lxml")
@@ -195,7 +195,7 @@ def _clean_text(text:str)->str:
         text = text.replace(char, '')
     return text
 
-def _get_single_fac_detils(div:bs4.element.Tag)->dict:
+def _get_single_fac_detils(div:bs4.element.Tag)->Dict:
     p_s = div.find_all('p')
     img_link = p_s[0].find_all('img')[1].get('src')
     name = p_s[1].text
@@ -207,7 +207,7 @@ def _get_single_fac_detils(div:bs4.element.Tag)->dict:
         'specialization': _clean_text(specialization)
     }
 
-def parse_faculty_details(fac_html:str)-> List[dict]:
+def parse_faculty_details(fac_html:str)-> List[Dict]:
     fac_details = []
     try:
         soup = BeautifulSoup(fac_html, 'html.parser')
@@ -247,7 +247,7 @@ def get_exam_row_data(row):
     data =  {k: None if pd.isna(v) else v for k, v in data.items()}
     return data
 
-def parse_exam_schedule(exam_schedule_html: str) -> dict:
+def parse_exam_schedule(exam_schedule_html: str) -> Dict:
     dfs = pd.read_html(exam_schedule_html)
     exam_schedule_data = defaultdict(list)
     curr_exam = None
