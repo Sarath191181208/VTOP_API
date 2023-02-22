@@ -20,6 +20,7 @@ import json
 import base64
 import numpy as np
 from bs4 import BeautifulSoup
+from typing import Tuple 
 
 import PIL
 from PIL import Image
@@ -176,7 +177,7 @@ async def get_valid_session(
     username: str, 
     password: str, 
     sess: aiohttp.ClientSession
-    )->tuple[
+    )->Tuple[
         Union[str, None],              # username
         bool]:                         # valid
         

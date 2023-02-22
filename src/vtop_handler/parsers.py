@@ -5,6 +5,7 @@
 
 import datetime
 import base64
+from typing import List
 import bs4
 import pandas as pd
 from bs4 import BeautifulSoup
@@ -73,7 +74,7 @@ def _get_course_code_dic(time_table_soup:BeautifulSoup)-> dict[str, str]:
     
     return course_code_name_dic
 
-def parse_timetable(timetable_html: str)-> dict[str, list]:
+def parse_timetable(timetable_html: str)-> dict[str, List]:
     """takes the html of the timetable and returns the timetable in the form of a dictionary"""
 
     soup = BeautifulSoup(timetable_html, 'lxml')
@@ -152,7 +153,7 @@ def parse_attendance(attendance_html: str) -> dict[str, dict] :
     # print(attendace_dict)
     return attendace_dict
 
-def parse_acadhistory(acad_html: str)-> dict[str, list]:
+def parse_acadhistory(acad_html: str)-> dict[str, List]:
 
     # if the student has no academic history 
     soup = BeautifulSoup(acad_html, "lxml")
@@ -206,7 +207,7 @@ def _get_single_fac_detils(div:bs4.element.Tag)->dict:
         'specialization': _clean_text(specialization)
     }
 
-def parse_faculty_details(fac_html:str)->list[dict]:
+def parse_faculty_details(fac_html:str)-> List[dict]:
     fac_details = []
     try:
         soup = BeautifulSoup(fac_html, 'html.parser')
@@ -216,7 +217,7 @@ def parse_faculty_details(fac_html:str)->list[dict]:
         print(e)
     return fac_details
 
-def parse_academic_calender(acad_calender_html:str)->list[str]:
+def parse_academic_calender(acad_calender_html:str)-> List[str]:
     img_links = []
     try:
         soup = BeautifulSoup(acad_calender_html, "html.parser")

@@ -15,14 +15,14 @@ Usage:
 
 """
 import asyncio
-from typing import Union
+from typing import Union, List
 import aiohttp
 
 from .parsers import parse_faculty_details
 from .constants import VTOP_FACULTY_URL
 
 
-async def get_faculty_details()-> Union[list[dict], None]:
+async def get_faculty_details()-> Union[List[dict], None]:
     """
     fetches faculty details from the vtop server
     
