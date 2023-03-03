@@ -1,7 +1,7 @@
 import re
 from typing import Dict, Union
 import pandas as pd
-
+import datetime
 
 def find_image(html_str:str) -> Union[str, None]:
     """
@@ -27,6 +27,9 @@ def find_image(html_str:str) -> Union[str, None]:
     return None
 
 null_if_dash = lambda x: None if x == "-" else x
+
+def get_curr_time_vtop_format() -> str:
+    return datetime.datetime.now(datetime.timezone.utc).strftime("%c GMT")
 
 def is_int(s: str) -> bool:
     try: int(s); return True
