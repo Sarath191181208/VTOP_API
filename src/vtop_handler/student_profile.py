@@ -22,7 +22,7 @@ import asyncio
 
 from typing import Tuple
 
-from .payloads import get_vtop_profile_payload
+from .payloads import get_profile_payload
 from .constants import HEADERS, VTOP_PROFILE_URL
 from .parsers import parse_profile
 
@@ -57,7 +57,7 @@ async def get_student_profile(sess: aiohttp.ClientSession, username: str)->Tuple
     """
     valid = False
     profile = dict()
-    payload = get_vtop_profile_payload(username)
+    payload = get_profile_payload(username)
     async with sess.post(VTOP_PROFILE_URL, data=payload, headers = HEADERS) as resp:
         profile_html = await resp.text()
         if resp.status == 200: # i.e we get the profile data

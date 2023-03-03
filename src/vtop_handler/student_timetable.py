@@ -22,7 +22,7 @@ from typing import Dict, Tuple
 import traceback
 
 from .constants import VTOP_TIMETABLE_URL, HEADERS, SEM_IDS
-from .payloads import get_vtop_timetable_payload 
+from .payloads import get_timetable_payload 
 from .parsers import parse_timetable
 
 import asyncio
@@ -107,7 +107,7 @@ async def get_timetable(
     valid = False
     time_table = {}
     for semID in set(SEM_IDS):
-        payload = get_vtop_timetable_payload(username, semID)
+        payload = get_timetable_payload(username, semID)
         time_table, valid = await _get_time_table_from_payload(sess, payload)
         if valid:
             break

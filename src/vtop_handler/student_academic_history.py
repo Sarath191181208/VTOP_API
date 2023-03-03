@@ -21,7 +21,7 @@
 import asyncio
 import aiohttp
 
-from .payloads import get_vtop_academic_profile_payload
+from .payloads import get_academic_profile_payload
 from .constants import VTOP_ACADHISTORY_URL, HEADERS
 from .parsers import parse_acadhistory
 
@@ -73,7 +73,7 @@ async def get_acadhistory(sess:aiohttp.ClientSession, id:str):
         valid: bool
             True if the request was successful.
     """
-    payload = get_vtop_academic_profile_payload(id)
+    payload = get_academic_profile_payload(id)
     grades, valid = await _get_acadhistory_from_payload(sess, payload)
 
     return (grades, valid)

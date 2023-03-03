@@ -19,7 +19,7 @@
 """
 
 from .constants import HEADERS, VTOP_ATTENDANCE_URL, SEM_IDS
-from .payloads import get_vtop_attendance_payload
+from .payloads import get_attendance_payload
 from .parsers import parse_attendance
 
 import asyncio
@@ -89,7 +89,7 @@ async def get_attendance(sess, username, semesterID=None):
     valid = False
     attendance = {}
     for semID in set(SEM_IDS):
-        payload = get_vtop_attendance_payload(username, semID)
+        payload = get_attendance_payload(username, semID)
         attendance, valid = await _get_attendance_from_payload(sess, payload)
         if valid:
             break

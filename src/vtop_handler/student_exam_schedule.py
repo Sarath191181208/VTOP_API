@@ -21,7 +21,7 @@ Returns Timetable in a dictionary form
 from typing import Tuple
 
 from .constants import VTOP_EXAM_SCHEDULE_URL, HEADERS, SEM_IDS
-from .payloads import get_vtop_exam_schedule_payload 
+from .payloads import get_exam_schedule_payload 
 from .parsers import parse_exam_schedule
 
 import asyncio
@@ -86,7 +86,7 @@ async def get_exam_schedule(
     valid = False
     exam_sch = {}
     for semID in set(SEM_IDS):
-        payload = get_vtop_exam_schedule_payload(username, semID)
+        payload = get_exam_schedule_payload(username, semID)
         exam_sch, valid = await _get_exam_schedule_from_payload(sess, payload)
         if valid:
             break
