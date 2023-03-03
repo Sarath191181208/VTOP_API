@@ -7,3 +7,4 @@ lxml==4.8.0
 pandas==1.4.2
 Pillow==9.2.0
 python-dotenv==0.20.0
+colorama
