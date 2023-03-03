@@ -18,9 +18,6 @@ from src.validators import is_valid_username_password
 
 from src.vtop_handler.Exceptions import InvalidCredentialsException
 
-from dotenv import load_dotenv
-load_dotenv()
-
 PORT = 5000
 app = Flask(__name__)
 
