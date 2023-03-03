@@ -7,11 +7,14 @@ start_time = time.time()
 import os
 import dotenv
 dotenv.load_dotenv()
-un1 = os.getenv('VTOP_USERNAME_2')
-p1 = os.getenv('VTOP_PASSWORD_2')+"34"
+# un1 = os.getenv('VTOP_USERNAME_2')
+# p1 = os.getenv('VTOP_PASSWORD_2')+"34"
 un2 = os.getenv('VTOP_USERNAME')
 p2 = os.getenv('VTOP_PASSWORD')
-details = ((un1, p1), (un2, p2))
+details = (
+    # (un1, p1),
+    (un2, p2),
+)
 URL = "http://127.0.0.1:5000/api/v1/alldetails"
 
 
