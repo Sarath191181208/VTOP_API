@@ -1,2 +1,3 @@
 from .captcha_failure import CaptchaFailure
 from .invalid_credentials import InvalidCredentialsException
+from .bad_request import BadRequestException
