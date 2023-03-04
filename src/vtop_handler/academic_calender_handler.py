@@ -18,7 +18,7 @@ import asyncio
 from typing import Union
 import aiohttp
 
-from .parsers import parse_academic_calender
+from ..parsers import parse_academic_calender
 from .constants import VTOP_ACAD_CALENDER_URL
 
 async def get_academic_calender():
@@ -50,5 +50,5 @@ async def main():
         print(res)
 
 if __name__ == "__main__":
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy()) # type: ignore
     asyncio.run(main())

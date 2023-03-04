@@ -18,11 +18,11 @@ Returns Timetable in a dictionary form
     >     asyncio.run(main())
 
 """
-from typing import Tuple
+from typing import Tuple, Union
 
 from .constants import VTOP_EXAM_SCHEDULE_URL, HEADERS, SEM_IDS
 from .payloads import get_exam_schedule_payload 
-from .parsers import parse_exam_schedule
+from ..parsers import parse_exam_schedule
 
 import asyncio
 import aiohttp
@@ -53,7 +53,7 @@ async def _get_exam_schedule_from_payload(sess:aiohttp.ClientSession, payload:di
 async def get_exam_schedule(
     sess: aiohttp.ClientSession, 
     username: str,
-    semesterID: str = None) -> Tuple[
+    semesterID: Union[str, None] = None) -> Tuple[
         dict,  # exam schedule
         bool]: # valid i.e sucess of the session
     """

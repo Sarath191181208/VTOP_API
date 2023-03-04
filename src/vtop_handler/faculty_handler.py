@@ -18,7 +18,7 @@ import asyncio
 from typing import Dict, Union, List
 import aiohttp
 
-from .parsers import parse_faculty_details
+from ..parsers import parse_faculty_details
 from .constants import VTOP_FACULTY_URL
 
 
@@ -52,5 +52,5 @@ async def main():
         print(res)
 
 if __name__ == "__main__":
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy()) # type: ignore
     asyncio.run(main())

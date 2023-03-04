@@ -20,7 +20,7 @@
 
 from .constants import HEADERS, VTOP_ATTENDANCE_URL, SEM_IDS
 from .payloads import get_attendance_payload
-from .parsers import parse_attendance
+from ..parsers import parse_attendance
 
 import asyncio
 import aiohttp

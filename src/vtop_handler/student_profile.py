@@ -24,7 +24,7 @@ from typing import Tuple
 
 from .payloads import get_profile_payload
 from .constants import HEADERS, VTOP_PROFILE_URL
-from .parsers import parse_profile
+from ..parsers import parse_profile
 
 async def get_student_profile(sess: aiohttp.ClientSession, username: str)->Tuple[dict, bool]:
     """

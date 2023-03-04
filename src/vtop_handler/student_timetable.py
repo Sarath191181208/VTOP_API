@@ -18,12 +18,12 @@ Returns Timetable in a dictionary form
     >     asyncio.run(main())
 
 """
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Union
 import traceback
 
 from .constants import VTOP_TIMETABLE_URL, HEADERS, SEM_IDS
 from .payloads import get_timetable_payload 
-from .parsers import parse_timetable
+from ..parsers import parse_timetable
 
 import asyncio
 import aiohttp
@@ -56,7 +56,7 @@ async def _get_time_table_from_payload(sess:aiohttp.ClientSession, payload: Dict
 async def get_timetable(
     sess: aiohttp.ClientSession, 
     username: str,
-    semesterID: str = None) -> Tuple[
+    semesterID: Union[str, None] = None) -> Tuple[
         Dict,  # timetable
         bool]: # valid i.e sucess of the session
     """
