@@ -43,3 +43,6 @@ VITAP_API_VENV/
 
 # vscode
 .vscode
+
+# flask sessions
+flask_session/
