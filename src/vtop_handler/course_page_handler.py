@@ -3,7 +3,7 @@ import aiohttp
 
 from .payloads import get_course_page_semeseter_names_payload
 from .constants import COURSE_PAGE_URL, HEADERS
-from .parsers import parse_course_names_values
+from .parsers import parse_course_page_semester_names
 
 async def get_course_semesters_list(sess: aiohttp.ClientSession, auth_id: str) -> Dict[str, str]:
     """
@@ -25,7 +25,7 @@ async def get_course_semesters_list(sess: aiohttp.ClientSession, auth_id: str) -
         with open('course_page.html', 'w') as f:
             f.write(html)
         try:
-            return_data = parse_course_names_values(html)
+            return_data = parse_course_page_semester_names(html)
         except Exception as e:
             print(e)
             print(e.__traceback__)
