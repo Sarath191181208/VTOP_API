@@ -46,7 +46,7 @@ def _zip_with_keys(values: List[str]) -> Dict[str, str]:
     keys = [
         "semSubId", "erpId", "courseType", "roomNumber",
         "buildingId", "slotName", "classId", "courseCode",
-        "courseTitle", "allottedProgram", "classNum", "facultyName", "facultySchool", "courseId",
+        "courseTitle", "allottedProgram", "classNum", "facultyName", "facultySchool", "courseId"
     ]
     return dict(zip(keys, values))
 
@@ -70,8 +70,13 @@ def parse_to_get_view_urls(full_course_page_html: str) -> List[Dict[str, str]]:
     # pattern to find the data
     pattern = re.compile(
         r"javascript:processViewStudentCourseDetail\((.*?)\);")
-    buttons = [re.findall(pattern, button)[0].replace("'", "").split(
-        ",") for button in buttons]  # buttons: list[ list[str] ]
+    for idx, button in enumerate(buttons):
+        print(button)
+        btn = re.findall(pattern, button)
+        if not btn: continue
+        print(btn[0])
+        buttons[idx] = btn[0].replace("'", "").split(',')
+
     # buttons: list[ dict[str, str] ]
     buttons = [_zip_with_keys(button) for button in buttons]
     return buttons
