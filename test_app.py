@@ -43,7 +43,7 @@ async def main():
         print("###"*30)
 
         fac_details = await get_faculty_details()
-        print_json(fac_details[:5])
+        print_json(fac_details[:5] if fac_details is not None else [])
         print("###"*30)
 
         acad_calender = await get_academic_calender()
