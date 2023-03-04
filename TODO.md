@@ -1,6 +1,6 @@
 - [x] Add a flask end point to acess these functions.
 - [ ] Write a document to explain how to use the API.
-- [ ] Use caching or a database for faster aceess to the data.
 - [ ] Write tests for the functions.
-- [ ] Create a payload object for the request. : better design.
+- [-] Use caching or a database for faster aceess to the data.
+- [-] Create a payload object for the request. : better design.
 - [-] Remove beautiful soup completely from the codebase.
