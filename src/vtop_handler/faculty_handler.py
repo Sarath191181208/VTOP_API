@@ -22,7 +22,7 @@ from ..parsers import parse_faculty_details
 from .constants import VTOP_FACULTY_URL
 
 
-async def get_faculty_details()-> Union[List[Dict], None]:
+async def get_faculty_details()-> Union[List[Dict[str, str]], None]:
     """
     fetches faculty details from the vtop server
     

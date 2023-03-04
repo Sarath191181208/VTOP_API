@@ -49,11 +49,12 @@ async def all_details():
             user_name = request.form.get('username', None)
             passwd = request.form.get('password', None)
 
-            if not is_valid_username_password(user_name, passwd):
+            if user_name is None or passwd is None or not is_valid_username_password(user_name, passwd):
                 raise InvalidCredentialsException(status_code=400)
 
             async with aiohttp.ClientSession() as sess:
                 user_name = await generate_session(user_name,passwd, sess)
+                if user_name is None: raise InvalidCredentialsException(status_code=401)
                 all_details_futures = get_all_details_futures(sess, user_name)
                 # awaiting all details to arrive and converting to dict
                 all_detials = {
@@ -75,11 +76,12 @@ async def exam_schedule():
             user_name = request.form.get('username', None)
             passwd = request.form.get('password', None)
 
-            if not is_valid_username_password(user_name, passwd):
+            if user_name is None or passwd is None or not is_valid_username_password(user_name, passwd):
                 raise InvalidCredentialsException(status_code=400)
 
             async with aiohttp.ClientSession() as sess:
                 user_name = await generate_session(user_name,passwd, sess)
+                if user_name is None: raise InvalidCredentialsException(status_code=401)
                 all_detials, is_valid = await get_exam_schedule(sess, user_name)
 
         except InvalidCredentialsException as ICexception:
