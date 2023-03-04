@@ -18,7 +18,7 @@ import asyncio
 from typing import Union
 import aiohttp
 
-from ..parsers import parse_academic_calender
+from .parsers import parse_academic_calender
 from .constants import VTOP_ACAD_CALENDER_URL
 
 async def get_academic_calender():

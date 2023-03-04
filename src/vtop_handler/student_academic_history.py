@@ -23,7 +23,7 @@ import aiohttp
 
 from .payloads import get_academic_profile_payload
 from .constants import VTOP_ACADHISTORY_URL, HEADERS
-from ..parsers import parse_acadhistory
+from .parsers import parse_acadhistory
 
 async def _get_acadhistory_from_payload(sess:aiohttp.ClientSession, payload:dict):
     valid = False

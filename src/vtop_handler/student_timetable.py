@@ -23,7 +23,7 @@ import traceback
 
 from .constants import VTOP_TIMETABLE_URL, HEADERS, SEM_IDS
 from .payloads import get_timetable_payload 
-from ..parsers import parse_timetable
+from .parsers import parse_timetable
 
 import asyncio
 import aiohttp
