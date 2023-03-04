@@ -3,7 +3,7 @@ from typing import Dict
 from bs4 import BeautifulSoup
 import pandas as pd
 
-from src.vtop_handler.utils import find_image, nan_to_none_in_dict
+from ..utils import find_image, nan_to_none_in_dict
 
 
 def parse_profile(profile_html: str) -> Dict:

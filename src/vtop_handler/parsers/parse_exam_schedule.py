@@ -1,4 +1,4 @@
-from src.vtop_handler.utils import is_int, null_if_dash
+from ..utils import is_int, null_if_dash
 
 import pandas as pd
 from collections import defaultdict
