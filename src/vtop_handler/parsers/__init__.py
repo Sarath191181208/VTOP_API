@@ -12,4 +12,4 @@ from .time_table_parser import parse_timetable
 from .parse_exam_schedule import parse_exam_schedule
 from .parse_faculty_details import parse_faculty_details
 
-from .parse_course_page import parse_course_page_semester_names, parse_course_names_values
+from .parse_course_page import parse_course_page_semester_names, parse_course_names_values, parse_to_get_view_urls

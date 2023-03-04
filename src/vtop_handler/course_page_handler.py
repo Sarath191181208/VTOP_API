@@ -38,9 +38,36 @@ async def get_course_semesters_list(sess: aiohttp.ClientSession, auth_id: str) -
 @may_throw
 async def get_course_page(sess: aiohttp.ClientSession, auth_id: str, semester_id: str) -> Dict[str, str]:
     """
-        Return the html of the course page
+        returns the dict of all the option element inturn the course names and values 
+
+        Returns:
+        ---
+        {
+            'AP2022236000502': 'CSE2007 - Database Management Systems - ETH', 
+            'AP2022236000756': 'CSE2007 - Database Management Systems - ELA', 
+            ...
+        }
     """
     payload = get_course_page_subject_names_payload(semester_id, auth_id)
     async with sess.post(COURSE_PAGE_SEMESTER_URL, data=payload, headers=HEADERS) as resp:
         html =  await resp.text()
         return parse_course_names_values(html)
+
+
+@may_throw
+async def get_course_page_links_payload(sess: aiohttp.ClientSession, class_id: str, semester_id: str, auth_id: str) -> List[Dict[str, str]]:
+    """
+        Returns the * payload * that's requrired to get the table of contents of a course
+        Returns:
+        ---
+        {
+            'semSubId': 'AP2022236000502',
+            'erpId': 'AP2022236',
+            ...
+        }
+    """
+    payload = get_course_page_table_of_contents_payload(
+        class_id, semester_id, auth_id)
+    async with sess.post(COURSE_PAGE_SELECT_COURSE_URL, data=payload, headers=HEADERS) as resp:
+        html = await resp.text()
+        return parse_to_get_view_urls(html)
