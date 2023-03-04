@@ -24,5 +24,7 @@ def may_throw(func):
             return jsonify({"Error": exception.msg}), exception.status_code
         except Exception as e:
             logging.exception(e)
+            print(e)
+            print(e.__traceback__)
             return jsonify({"Error": "Internal Server Error"}), 500
     return wrapper
