@@ -100,26 +100,18 @@ async def login():
     return jsonify({"cookie": cookie}), 200
 
 @app.route('/api/v1/get_semester_names_codes', methods=['POST'])
+@is_cookie_present
+@may_throw
 async def get_semester_names_codes():
-    print(session)
-    cookie = session.get("cookie", None)
-    semester_names_codes_dict = {}
-    if cookie is None: return jsonify({"Error": "You must login to access this route! "}), 401
-    try:
-        auth_id = request.form.get('auth_id', None)
-        if auth_id is None: raise BadRequestException("You must provide auth_id to access this route!")
-        cookies = {
-            'JSESSIONID': cookie,
-            "loginUserType": "vtopuser"
-        }
-        async with aiohttp.ClientSession(cookies=cookies) as sess:
-            semester_names_codes_dict = await get_course_semesters_list(sess, auth_id)
-    except BadRequestException as ICexception:
-        return jsonify({"Error": ICexception.msg}), ICexception.status_code
-    except Exception as e:
-        logging.exception(e)
-        return jsonify({"Error": "Internal Server Error"}), 500
-    
+    auth_id = request.form.get('auth_id', None)
+    if auth_id is None: raise BadRequestException("You must provide auth_id to access this route!")
+    cookies = {
+        'JSESSIONID': session.get("cookie"),
+        "loginUserType": "vtopuser"
+    }
+    async with aiohttp.ClientSession(cookies=cookies) as sess:
+        semester_names_codes_dict = await get_course_semesters_list(sess, auth_id)
+
     return jsonify(semester_names_codes_dict), 200
 
 @app.route('/api/v1/faculty', methods=['POST'])
