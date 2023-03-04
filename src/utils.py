@@ -1,4 +1,7 @@
 import colorama
+import json
+from typing import Union, List, Dict
+
 colorama.init()
 
 _get_color_from_str = lambda clr : {
@@ -22,6 +25,10 @@ def c_print(*msg, **kwargs):
         print(color , msg , colorama.Style.RESET_ALL, end=end)
     else:
         print(msg)
+
+
+def print_json(data: Union[Dict, List]) -> None:
+    print(json.dumps(data, indent=4))
 
 if __name__ == "__main__":
     c_print('hello', color='red')
