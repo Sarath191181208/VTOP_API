@@ -140,7 +140,7 @@ async def generate_session(username:str, password:str, sess:  aiohttp.ClientSess
         # finding the captcha image form the login page
         captcha_src = find_image(login_html)
         # return if no captcha found
-        if captcha_src is None: return (None, None, False)
+        if captcha_src is None: return None
         # converting the captcha string to a image
         captcha_img = _str_to_img(captcha_src)
         # solving the captcha
