@@ -58,3 +58,9 @@ get_course_page_table_of_contents_payload = lambda class_id, sem_id, auth_id:{
         "authorizedID": auth_id, 
         "x": get_curr_time_vtop_format()
 }
+
+def get_download_links_payload(payload_details_dict):
+        payload_details_dict.update({
+                "x": get_curr_time_vtop_format()
+        })
+        return payload_details_dict

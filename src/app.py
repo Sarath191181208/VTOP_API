@@ -11,7 +11,7 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 from src.vtop_handler import generate_session, get_student_profile
 from src.vtop_handler import get_academic_calender, get_faculty_details
 from src.vtop_handler import get_timetable, get_attendance, get_acadhistory
-from src.vtop_handler.course_page_handler import get_course_page, get_course_page_links_payload, get_course_semesters_list
+from src.vtop_handler.course_page_handler import get_course_page, get_course_page_links_payload, get_course_semesters_list, get_download_links_from_course_page
 from src.vtop_handler import get_exam_schedule
 
 from src.validators import validate_username_password
@@ -151,8 +151,27 @@ async def get_course_page_entries_link_payloads():
         "loginUserType": "vtopuser"
     }
     async with aiohttp.ClientSession(cookies=cookies) as sess:
-        links_payloads_list = await get_course_page_links_payload(sess, auth_id, class_id, sem_id)
+        links_payloads_list = await get_course_page_links_payload(sess, class_id, sem_id, auth_id)
     return jsonify(links_payloads_list), 200
+
+
+@app.route('/api/v1/get_download_links', methods=['POST'])
+@is_cookie_present
+@may_throw
+async def get_download_links():
+    json_data = request.get_json()
+    auth_id = json_data.get('authorizedID', None)
+    if json_data is None: raise BadRequestException("You must provide json data to access this route!")
+    if auth_id is None:
+        raise BadRequestException(
+            "You must provide authorizedID to access this route!")
+    cookies = {
+        'JSESSIONID': session.get("cookie"),
+        "loginUserType": "vtopuser"
+    }
+    async with aiohttp.ClientSession(cookies=cookies) as sess:
+        download_links = await get_download_links_from_course_page(sess, json_data)
+    return jsonify(download_links), 200
 
 
 @app.route('/api/v1/faculty', methods=['POST'])

@@ -1,9 +1,9 @@
 from typing import Dict, List
 import aiohttp
 
-from .payloads import get_course_page_semeseter_names_payload, get_course_page_subject_names_payload, get_course_page_table_of_contents_payload
-from .constants import COURSE_PAGE_URL, COURSE_PAGE_SEMESTER_URL, COURSE_PAGE_SELECT_COURSE_URL, HEADERS
-from .parsers import parse_course_page_semester_names, parse_course_names_values, parse_to_get_view_urls
+from .payloads import get_course_page_semeseter_names_payload, get_course_page_subject_names_payload, get_course_page_table_of_contents_payload, get_download_links_payload
+from .constants import COURSE_PAGE_URL, COURSE_PAGE_SEMESTER_URL, COURSE_PAGE_SELECT_COURSE_URL, COURSE_PAGE_GET_CONTENT_URL, HEADERS
+from .parsers import parse_course_page_semester_names, parse_course_names_values, parse_to_get_view_urls, parse_reference_material_links
 
 def may_throw(func):
     async def wrapper(*args, **kwargs):
@@ -71,3 +71,12 @@ async def get_course_page_links_payload(sess: aiohttp.ClientSession, class_id: s
     async with sess.post(COURSE_PAGE_SELECT_COURSE_URL, data=payload, headers=HEADERS) as resp:
         html = await resp.text()
         return parse_to_get_view_urls(html)
+    
+@may_throw
+async def get_download_links_from_course_page(sess: aiohttp.ClientSession, payload: Dict[str, str]) -> List[Dict[str, str]]:
+    payload = get_download_links_payload(payload)
+    async with sess.post(COURSE_PAGE_GET_CONTENT_URL, data=payload, headers=HEADERS) as resp:
+        html = await resp.text()
+        with open("test.html", "w") as f:
+            f.write(html)
+        return parse_reference_material_links(html)
