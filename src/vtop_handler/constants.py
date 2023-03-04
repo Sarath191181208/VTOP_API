@@ -14,6 +14,7 @@ VTOP_ACAD_CALENDER_URL = r'https://vitap.ac.in/academic-calendar/'
 COURSE_PAGE_URL = r"https://vtop2.vitap.ac.in/vtop/academics/common/StudentCoursePage" # for gettting into the page returns-> sem id
 COURSE_PAGE_SEMESTER_URL = r"https://vtop2.vitap.ac.in/vtop/getCourseForCoursePage" # for selecting a semester ex: WIN SEM  returns-> subject ids
 COURSE_PAGE_SELECT_COURSE_URL = r"https://vtop2.vitap.ac.in/vtop/getSlotIdForCoursePage" # for selecting a course ex: CSE1001 python returns-> table of contents
+COURSE_PAGE_GET_CONTENT_URL = r'https://vtop2.vitap.ac.in/vtop/processViewStudentCourseDetail'
 
 
 HEADERS = {
