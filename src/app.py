@@ -11,7 +11,7 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 from src.vtop_handler import generate_session, get_student_profile
 from src.vtop_handler import get_academic_calender, get_faculty_details
 from src.vtop_handler import get_timetable, get_attendance, get_acadhistory
-from src.vtop_handler.course_page_handler import get_course_semesters_list
+from src.vtop_handler.course_page_handler import get_course_page, get_course_semesters_list
 from src.vtop_handler import get_exam_schedule
 
 from src.validators import validate_username_password
@@ -113,6 +113,26 @@ async def get_semester_names_codes():
         semester_names_codes_dict = await get_course_semesters_list(sess, auth_id)
 
     return jsonify(semester_names_codes_dict), 200
+
+
+@app.route('/api/v1/get_course_details', methods=['POST'])
+@is_cookie_present
+@may_throw
+async def get_course_details():
+    course_details = {}
+    auth_id = request.form.get('auth_id', None)
+    semester_name_code = request.form.get('semester_name_code', None)
+
+    if auth_id is None: raise BadRequestException("You must provide auth_id to access this route!")
+    if semester_name_code is None: raise BadRequestException("You must provide semester_name_code to access this route!")
+
+    cookies = {
+        'JSESSIONID': session.get("cookie"),
+        "loginUserType": "vtopuser"
+    }
+    async with aiohttp.ClientSession(cookies=cookies) as sess:
+        course_details = await get_course_page(sess, auth_id, semester_name_code)
+    return jsonify(course_details), 200
 
 @app.route('/api/v1/faculty', methods=['POST'])
 async def faculty():
