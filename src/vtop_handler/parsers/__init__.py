@@ -11,3 +11,5 @@ from .time_table_parser import parse_timetable
 
 from .parse_exam_schedule import parse_exam_schedule
 from .parse_faculty_details import parse_faculty_details
+
+from .parse_course_page import parse_course_names_values

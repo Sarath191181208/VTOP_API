@@ -21,8 +21,9 @@ def parse_course_page_semester_names(course_page_view_html: str) -> Dict[str, st
     """
     soup = BeautifulSoup(course_page_view_html, 'html.parser')
     options = soup.find_all('option')
-    # return the list removing the first, last element as they are placeholders -- Choose Semester --, -- Choose Faculty --
-    options = options[1:-1]
+    # return the list removing the first, last elements as they are placeholders -- Choose Semester --, -- Choose Faculty --
+    options = options[1:-3]
+    print(options)
     return {option['value']: option.text for option in options}
 
 
