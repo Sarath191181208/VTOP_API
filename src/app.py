@@ -5,8 +5,6 @@ import aiohttp
 import sys
 import os
 
-from src.vtop_handler.parsers.parse_course_page import parse_to_get_view_urls
-
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
