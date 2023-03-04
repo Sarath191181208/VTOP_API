@@ -1,11 +1,18 @@
-from typing import Dict
+from typing import Dict, List
 import aiohttp
 
-from src.decorators import may_throw
+from .payloads import get_course_page_semeseter_names_payload, get_course_page_subject_names_payload, get_course_page_table_of_contents_payload
+from .constants import COURSE_PAGE_URL, COURSE_PAGE_SEMESTER_URL, COURSE_PAGE_SELECT_COURSE_URL, HEADERS
+from .parsers import parse_course_page_semester_names, parse_course_names_values, parse_to_get_view_urls
 
-from .payloads import get_course_page_semeseter_names_payload, get_course_page_subject_names_payload
-from .constants import COURSE_PAGE_URL, COURSE_PAGE_SEMESTER_URL, HEADERS
-from .parsers import parse_course_page_semester_names, parse_course_names_values
+def may_throw(func):
+    async def wrapper(*args, **kwargs):
+        try:
+            return await func(*args, **kwargs)
+        except Exception as e:
+            print(f"Error in {func.__name__} with args: {args} and kwargs: {kwargs}")
+            print(f"Error: {e}")
+    return wrapper
 
 @may_throw
 async def get_course_semesters_list(sess: aiohttp.ClientSession, auth_id: str) -> Dict[str, str]:
