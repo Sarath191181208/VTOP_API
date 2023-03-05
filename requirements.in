@@ -8,4 +8,5 @@ pandas==1.4.2
 Pillow==9.2.0
 python-dotenv==0.20.0
 Flask-Session==0.4.0
+uvicorn==0.20.0
 colorama
