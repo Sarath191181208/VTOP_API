@@ -85,6 +85,8 @@ async def exam_schedule():
 @app.route('/api/v1/login', methods=['POST'])
 @may_throw
 async def login():
+    if "cookie" in session: return jsonify({"cookie": session.get("cookie")}), 200
+
     cookie = None
     user_name = request.form.get('username', "")
     passwd = request.form.get('password', "")
