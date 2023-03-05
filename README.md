@@ -1,9 +1,10 @@
 Quick Navigation:
 
-- [Brief Description](#description)
-- [How to install ?](#how-to-install-this-project)
-- [How does the captcha solving work ?](#how-does-the-captcha-solving-work)
-- [What if the website changes?](#change-the-vtophandler-for-any-change-in-the-vtop-website)
+- [Description](#description)
+- [How to start the server ? (Python \>= 3.9)](#how-to-start-the-server--python--39)
+- [How to install this project ?](#how-to-install-this-project-)
+- [How does the captcha solving work ?](#how-does-the-captcha-solving-work-)
+- [Change the vtop\_handler for any change in the vtop website](#change-the-vtop_handler-for-any-change-in-the-vtop-website)
 
 ## Description
 
@@ -18,6 +19,10 @@ Brief Overview:
 - The project is mainly wirtten in python 3.9.
 - The project is present in the src directory.
 - See the vtop_handler_examples.py for examples on how to use the vtop_handler package.
+
+## How to start the server ? (Python >= 3.9)
+- Download all the dependencies `pip install -r requirements.in`
+- Run the shell command `sh start.sh`
 
 ## How to install this project ?
 
