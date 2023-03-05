@@ -99,6 +99,7 @@ async def login():
         if user_name is None: raise InvalidCredentialsException(status_code=401)
     
     session["cookie"] = cookie
+    session["auth_id"] = user_name
     return jsonify({"cookie": cookie}), 200
 
 @app.route('/api/v1/get_semester_names_codes', methods=['POST'])
@@ -162,11 +163,8 @@ async def get_course_page_entries_link_payloads():
 @may_throw
 async def get_download_links():
     json_data = request.get_json()
-    auth_id = json_data.get('authorizedID', None)
     if json_data is None: raise BadRequestException("You must provide json data to access this route!")
-    if auth_id is None:
-        raise BadRequestException(
-            "You must provide authorizedID to access this route!")
+    json_data.update({"authorizedID": session.get("auth_id")})
     cookies = {
         'JSESSIONID': session.get("cookie"),
         "loginUserType": "vtopuser"
