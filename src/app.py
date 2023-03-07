@@ -181,30 +181,30 @@ async def get_download_links():
     return jsonify(download_links), 200
 
 
-@app.route('/download_class_materials', methods=["GET"])
-@may_throw
-@is_cookie_present
-async def download_class_materials():
-    raise_if_not_args_passed(request.args, "download_suffix", "auth_id")
-    download_suffix = request.args.get("download_suffix")
-    auth_id = request.args.get("auth_id")
+# @app.route('/download_class_materials', methods=["GET"])
+# @may_throw
+# @is_cookie_present
+# async def download_class_materials():
+#     raise_if_not_args_passed(request.args, "download_suffix", "auth_id")
+#     download_suffix = request.args.get("download_suffix")
+#     auth_id = request.args.get("auth_id")
 
-    download_link = f"https://vtop2.vitap.ac.in/vtop/{download_suffix}?authorizedID={auth_id}&x={get_curr_time_vtop_format()}"
-    cookies = {
-        'JSESSIONID': session.get("cookie"),
-        "loginUserType": "vtopuser"
-    }
-    async with aiohttp.ClientSession(cookies=cookies) as sess:
-        async with sess.get(download_link) as resp:
-            if resp.status != 200:
-                print(resp.status)
-                raise BadRequestException(
-                    "Something went wrong while downloading the file!")
-            file_name = (resp.headers.get("Content-Disposition", "")
-                         .split("filename=")[1]
-                         .replace('"', ''))
+#     download_link = f"https://vtop2.vitap.ac.in/vtop/{download_suffix}?authorizedID={auth_id}&x={get_curr_time_vtop_format()}"
+#     cookies = {
+#         'JSESSIONID': session.get("cookie"),
+#         "loginUserType": "vtopuser"
+#     }
+#     async with aiohttp.ClientSession(cookies=cookies) as sess:
+#         async with sess.get(download_link) as resp:
+#             if resp.status != 200:
+#                 print(resp.status)
+#                 raise BadRequestException(
+#                     "Something went wrong while downloading the file!")
+#             file_name = (resp.headers.get("Content-Disposition", "")
+#                          .split("filename=")[1]
+#                          .replace('"', ''))
 
-            return send_file(BytesIO(await resp.read()), attachment_filename=file_name, as_attachment=True, download_name=file_name)
+#             return send_file(BytesIO(await resp.read()), attachment_filename=file_name, as_attachment=True, download_name=file_name)
             # return await resp.read(), 200, {"Content-Disposition": f"attachment; filename={file_name}"}
 
 
