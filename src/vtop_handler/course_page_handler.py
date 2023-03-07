@@ -77,6 +77,4 @@ async def get_download_links_from_course_page(sess: aiohttp.ClientSession, paylo
     payload = get_download_links_payload(payload)
     async with sess.post(COURSE_PAGE_GET_CONTENT_URL, data=payload, headers=HEADERS) as resp:
         html = await resp.text()
-        with open("test.html", "w") as f:
-            f.write(html)
         return parse_reference_material_links(html)
