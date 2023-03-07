@@ -1,5 +1,6 @@
 from functools import wraps
 import logging
+from typing import Dict
 from flask import jsonify, session
 
 from src.vtop_handler.Exceptions.bad_request import BadRequestException
@@ -31,7 +32,7 @@ def may_throw(func):
     return wrapper
 
 
-def raise_if_not_args_passed(request_args: dict[str, str], *args: str):
+def raise_if_not_args_passed(request_args: Dict[str, str], *args: str):
     """
     Checks if the request args contains the required args if not raises a BadRequestException
     """
