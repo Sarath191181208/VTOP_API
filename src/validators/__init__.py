@@ -1,1 +1,1 @@
-from .student_input_validator import validate_username_password
+from .student_input_validator import throw_if_invalid_username_password
