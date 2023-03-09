@@ -206,10 +206,6 @@ async def fetch_marks():
         marks_dict = await get_marks_dict(sess, auth_id, sem_id)
     return jsonify(marks_dict), 200
 
-    
-
-
-
 # @app.route('/download_class_materials', methods=["GET"])
 # @may_throw
 # @is_cookie_present
