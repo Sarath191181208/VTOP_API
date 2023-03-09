@@ -16,6 +16,8 @@ COURSE_PAGE_SEMESTER_URL = r"https://vtop2.vitap.ac.in/vtop/getCourseForCoursePa
 COURSE_PAGE_SELECT_COURSE_URL = r"https://vtop2.vitap.ac.in/vtop/getSlotIdForCoursePage" # for selecting a course ex: CSE1001 python returns-> table of contents
 COURSE_PAGE_GET_CONTENT_URL = r'https://vtop2.vitap.ac.in/vtop/processViewStudentCourseDetail'
 
+# Marks View
+MARKS_VIEW_PAGE = r'https://vtop2.vitap.ac.in/vtop/examinations/doStudentMarkView'
 
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36',

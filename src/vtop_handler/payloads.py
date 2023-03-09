@@ -64,3 +64,9 @@ def get_download_links_payload(payload_details_dict):
                 "x": get_curr_time_vtop_format()
         })
         return payload_details_dict
+
+def get_marks_view_payload(sem_id: str, auth_id: str):
+        return {
+            "authorizedID": auth_id,
+            "semesterSubId": sem_id
+        }

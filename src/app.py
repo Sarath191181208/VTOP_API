@@ -7,18 +7,20 @@ import aiohttp
 import sys
 import os
 
+
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 from src.decorators import is_cookie_present, may_throw, raise_if_not_args_passed
-from src.vtop_handler.Exceptions import CustomBaseException, InvalidCredentialsException, BadRequestException
+from src.vtop_handler.Exceptions import InvalidCredentialsException, BadRequestException
 from src.validators import throw_if_invalid_username_password
-from src.vtop_handler.utils import get_curr_time_vtop_format
 from src.vtop_handler import get_exam_schedule
 from src.vtop_handler.course_page_handler import get_course_page, get_course_page_links_payload, get_course_semesters_list, get_download_links_from_course_page
 from src.vtop_handler import get_timetable, get_attendance, get_acadhistory
 from src.vtop_handler import get_academic_calender, get_faculty_details
 from src.vtop_handler import generate_session, get_student_profile
+from src.vtop_handler.marks_view import get_marks_dict
+
 
 PORT = 5000
 app = Flask(__name__)
@@ -44,6 +46,11 @@ def get_all_details_futures(sess: aiohttp.ClientSession, user_name: str):
         "academic_history": academic_history_future
     }
 
+def get_cookies() -> dict[str, str]:
+    return {
+        'JSESSIONID': session.get("cookie"), # type: ignore
+        "loginUserType": "vtopuser"
+    }
 
 @app.route('/')
 def hello_world():
@@ -110,6 +117,12 @@ async def login():
     session["cookie"] = cookie
     session["auth_id"] = user_name
     return jsonify({"cookie": cookie}), 200
+
+@app.route('/api/v1/clear_cookies', methods=['POST'])
+async def clear_coookies():
+    if "cookie" in session:
+        session.pop('cookie')
+        session.pop('auth_id')
 
 @app.route('/api/v1/get_semester_names_codes', methods=['POST'])
 @is_cookie_present
@@ -179,6 +192,22 @@ async def get_download_links():
     async with aiohttp.ClientSession(cookies=cookies) as sess:
         download_links = await get_download_links_from_course_page(sess, json_data)
     return jsonify(download_links), 200
+
+@app.route("/api/v1/fetch_marks", methods= ["POST"])
+@is_cookie_present
+@may_throw
+async def fetch_marks():
+    raise_if_not_args_passed(request.form, 'sem_id', 'auth_id')
+    sem_id = request.form['sem_id']
+    auth_id = request.form['auth_id']
+
+    cookies = get_cookies()
+    async with aiohttp.ClientSession(cookies=cookies) as sess:
+        marks_dict = await get_marks_dict(sess, auth_id, sem_id)
+    return jsonify(marks_dict), 200
+
+    
+
 
 
 # @app.route('/download_class_materials', methods=["GET"])
