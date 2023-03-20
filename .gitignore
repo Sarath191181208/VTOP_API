@@ -46,3 +46,4 @@ VITAP_API_VENV/
 
 # flask sessions
 flask_session/
+.Ds_store
