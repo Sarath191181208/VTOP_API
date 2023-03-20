@@ -1,3 +1,4 @@
+from typing import Dict
 import aiohttp
 
 from src.vtop_handler.parsers.parser_semester_marks import parse_marks_page
@@ -8,7 +9,7 @@ async def   get_marks_dict(
             sess: aiohttp.ClientSession, 
             auth_id: str, 
             sem_id: str
-    ) -> dict[str, str]:
+    ) -> Dict[str, str]:
     payload = get_marks_view_payload(sem_id , auth_id)
     async with sess.post(MARKS_VIEW_PAGE, data=payload, headers=HEADERS) as resp:
         html = await resp.text()

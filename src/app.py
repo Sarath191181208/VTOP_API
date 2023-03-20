@@ -1,5 +1,6 @@
 import logging
 from io import BytesIO
+from typing import Dict
 from flask import Flask, jsonify, request, send_file, session
 from flask_session import Session
 import asyncio
@@ -46,7 +47,7 @@ def get_all_details_futures(sess: aiohttp.ClientSession, user_name: str):
         "academic_history": academic_history_future
     }
 
-def get_cookies() -> dict[str, str]:
+def get_cookies() -> Dict[str, str]:
     return {
         'JSESSIONID': session.get("cookie"), # type: ignore
         "loginUserType": "vtopuser"
@@ -205,6 +206,8 @@ async def fetch_marks():
     async with aiohttp.ClientSession(cookies=cookies) as sess:
         marks_dict = await get_marks_dict(sess, auth_id, sem_id)
     return jsonify(marks_dict), 200
+
+@app.route("/download_")
 
 # @app.route('/download_class_materials', methods=["GET"])
 # @may_throw
