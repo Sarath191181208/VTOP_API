@@ -19,6 +19,9 @@ COURSE_PAGE_GET_CONTENT_URL = r'https://vtop2.vitap.ac.in/vtop/processViewStuden
 # Marks View
 MARKS_VIEW_PAGE = r'https://vtop2.vitap.ac.in/vtop/examinations/doStudentMarkView'
 
+# Curriculum URL
+CURRICULUM_PAGE_URL= "https://vtop2.vitap.ac.in/vtop/academics/common/Curriculum"
+
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36',
 }

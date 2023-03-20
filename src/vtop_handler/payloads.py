@@ -81,3 +81,12 @@ def get_marks_view_payload(sem_id: str,
 
         "semesterSubId": sem_id
     }
+
+
+def get_my_curriculum_payload(roll_no: str):
+    return {
+        "verifyMenu": "true",
+        "winImage": "undefined",
+        "authorizedID": roll_no,
+        "nocache": "@ (new Date().getTime())"
+    }

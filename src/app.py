@@ -1,26 +1,28 @@
+from src.vtop_handler.marks_view import get_marks_dict
+from src.vtop_handler.curriculum import get_curriculum_info
 import logging
-from io import BytesIO
-from typing import Dict
-from flask import Flask, jsonify, request, send_file, session
+from typing import Dict, Tuple
+from flask import Flask, Response, jsonify, request, session
 from flask_session import Session
-import asyncio
 import aiohttp
 import sys
 import os
 
-
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
-from src.decorators import is_cookie_present, may_throw, raise_if_not_args_passed
+from src.decorators import is_logged_in, may_throw, raise_if_not_args_passed
 from src.vtop_handler.Exceptions import InvalidCredentialsException, BadRequestException
 from src.validators import throw_if_invalid_username_password
 from src.vtop_handler import get_exam_schedule
-from src.vtop_handler.course_page_handler import get_course_page, get_course_page_links_payload, get_course_semesters_list, get_download_links_from_course_page
+from src.vtop_handler.course_page_handler import (
+    get_course_page, get_course_page_links_payload, 
+    get_course_semesters_list, 
+    get_download_links_from_course_page)
 from src.vtop_handler import get_timetable, get_attendance, get_acadhistory
 from src.vtop_handler import get_academic_calender, get_faculty_details
 from src.vtop_handler import generate_session, get_student_profile
-from src.vtop_handler.marks_view import get_marks_dict
+
 
 
 PORT = 5000
@@ -47,11 +49,13 @@ def get_all_details_futures(sess: aiohttp.ClientSession, user_name: str):
         "academic_history": academic_history_future
     }
 
+
 def get_cookies() -> Dict[str, str]:
     return {
-        'JSESSIONID': session.get("cookie"), # type: ignore
+        'JSESSIONID': session.get("cookie"),  # type: ignore
         "loginUserType": "vtopuser"
     }
+
 
 @app.route('/')
 def hello_world():
@@ -119,14 +123,16 @@ async def login():
     session["auth_id"] = user_name
     return jsonify({"cookie": cookie}), 200
 
+
 @app.route('/api/v1/clear_cookies', methods=['POST'])
 async def clear_coookies():
     if "cookie" in session:
         session.pop('cookie')
         session.pop('auth_id')
 
+
 @app.route('/api/v1/get_semester_names_codes', methods=['POST'])
-@is_cookie_present
+@is_logged_in
 @may_throw
 async def get_semester_names_codes():
     raise_if_not_args_passed(request.form, 'auth_id')
@@ -142,7 +148,7 @@ async def get_semester_names_codes():
 
 
 @app.route('/api/v1/get_course_details', methods=['POST'])
-@is_cookie_present
+@is_logged_in
 @may_throw
 async def get_course_details():
     course_details = {}
@@ -160,7 +166,7 @@ async def get_course_details():
 
 
 @app.route('/api/v1/get_course_page_entries_link_payloads', methods=['POST'])
-@is_cookie_present
+@is_logged_in
 @may_throw
 async def get_course_page_entries_link_payloads():
     raise_if_not_args_passed(request.form, 'class_id', 'sem_id', 'auth_id')
@@ -173,12 +179,13 @@ async def get_course_page_entries_link_payloads():
         "loginUserType": "vtopuser"
     }
     async with aiohttp.ClientSession(cookies=cookies) as sess:
-        links_payloads_list = await get_course_page_links_payload(sess, class_id, sem_id, auth_id)
+        links_payloads_list = await get_course_page_links_payload(
+            sess, class_id, sem_id, auth_id)
     return jsonify(links_payloads_list), 200
 
 
 @app.route('/api/v1/get_download_links', methods=['POST'])
-@is_cookie_present
+@is_logged_in
 @may_throw
 async def get_download_links():
     json_data = request.get_json()
@@ -194,8 +201,9 @@ async def get_download_links():
         download_links = await get_download_links_from_course_page(sess, json_data)
     return jsonify(download_links), 200
 
-@app.route("/api/v1/fetch_marks", methods= ["POST"])
-@is_cookie_present
+
+@app.route("/api/v1/fetch_marks", methods=["POST"])
+@is_logged_in
 @may_throw
 async def fetch_marks():
     raise_if_not_args_passed(request.form, 'sem_id', 'auth_id')
@@ -207,8 +215,8 @@ async def fetch_marks():
         marks_dict = await get_marks_dict(sess, auth_id, sem_id)
     return jsonify(marks_dict), 200
 
-@app.route("/download_")
 
+@app.route("/download_")
 # @app.route('/download_class_materials', methods=["GET"])
 # @may_throw
 # @is_cookie_present
@@ -216,7 +224,6 @@ async def fetch_marks():
 #     raise_if_not_args_passed(request.args, "download_suffix", "auth_id")
 #     download_suffix = request.args.get("download_suffix")
 #     auth_id = request.args.get("auth_id")
-
 #     download_link = f"https://vtop2.vitap.ac.in/vtop/{download_suffix}?authorizedID={auth_id}&x={get_curr_time_vtop_format()}"
 #     cookies = {
 #         'JSESSIONID': session.get("cookie"),
@@ -231,16 +238,25 @@ async def fetch_marks():
 #             file_name = (resp.headers.get("Content-Disposition", "")
 #                          .split("filename=")[1]
 #                          .replace('"', ''))
-
 #             return send_file(BytesIO(await resp.read()), attachment_filename=file_name, as_attachment=True, download_name=file_name)
-            # return await resp.read(), 200, {"Content-Disposition": f"attachment; filename={file_name}"}
+# return await resp.read(), 200, {"Content-Disposition": f"attachment; filename={file_name}"}
 
-
+@app.route('/api/v1/get_curriculum', methods=['POST'])
+@is_logged_in
+@may_throw
+async def get_curriculum() -> Tuple[Response, int]:
+    raise_if_not_args_passed(request.form, 'roll_no')
+    auth_id = request.form['roll_no']
+    cookies = get_cookies()
+    async with aiohttp.ClientSession(cookies=cookies) as sess:
+        curriculum = await get_curriculum_info(sess, auth_id)
+    return jsonify(curriculum.dict()), 200
 
 @app.route('/api/v1/faculty', methods=['POST'])
 async def faculty():
     res = await get_faculty_details()
     return jsonify(res)
+
 
 @app.route('/api/v1/academic_calenders', methods=['POST'])
 async def acad_calenders():

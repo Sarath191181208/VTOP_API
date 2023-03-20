@@ -7,7 +7,7 @@ from src.vtop_handler.Exceptions.bad_request import BadRequestException
 from src.vtop_handler.Exceptions.custom_base_exception import CustomBaseException
 
 
-def is_cookie_present(func):
+def is_logged_in(func):
     @wraps(func)
     async def wrapper(*args, **kwargs):
         cookie = session.get("cookie", None)
