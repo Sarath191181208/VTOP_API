@@ -48,3 +48,13 @@ def nan_to_none_in_dict(x: Dict) -> Dict:
     converts all the nan values to None in the given dict
     """
     return {k: None if pd.isna(v) else v for k, v in x.items()}
+
+def may_throw(func):
+    async def wrapper(*args, **kwargs):
+        try:
+            return await func(*args, **kwargs)
+        except Exception as e:
+            print(
+                f"Error in {func.__name__} with args: {args} and kwargs: {kwargs}")
+            print(f"Error: {e}")
+    return wrapper
