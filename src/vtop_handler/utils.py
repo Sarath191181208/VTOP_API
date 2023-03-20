@@ -3,10 +3,11 @@ from typing import Dict, Union
 import pandas as pd
 import datetime
 
-def find_image(html_str:str) -> Union[str, None]:
+
+def find_image(html_str: str) -> Union[str, None]:
     """
     finds the captcha base64 image in the given html
-    
+
     Explanation:
     ------------
 
@@ -26,17 +27,24 @@ def find_image(html_str:str) -> Union[str, None]:
         return img.group(1)
     return None
 
-null_if_dash = lambda x: None if x == "-" else x
+
+def null_if_dash(x): return None if x == "-" else x
+
 
 def get_curr_time_vtop_format() -> str:
     return datetime.datetime.now(datetime.timezone.utc).strftime("%c GMT")
 
+
 def is_int(s: str) -> bool:
-    try: int(s); return True
-    except: return False
+    try:
+        int(s)
+        return True
+    except:
+        return False
+
 
 def nan_to_none_in_dict(x: Dict) -> Dict:
     """
     converts all the nan values to None in the given dict
     """
-    return {k: None if pd.isna(v) else v for k,v in x.items()}
+    return {k: None if pd.isna(v) else v for k, v in x.items()}
