@@ -40,6 +40,8 @@ gunicorn==20.1.0
     # via -r ./requirements.in
 h11==0.14.0
     # via uvicorn
+html5lib==1.1
+    # via -r ./requirements.in
 idna==3.4
     # via yarl
 importlib-metadata==6.0.0
@@ -64,6 +66,8 @@ pandas==1.4.2
     # via -r ./requirements.in
 pillow==9.2.0
     # via -r ./requirements.in
+pydantic==1.10.6
+    # via -r ./requirements.in
 python-dateutil==2.8.2
     # via pandas
 python-dotenv==0.20.0
@@ -71,11 +75,17 @@ python-dotenv==0.20.0
 pytz==2022.7.1
     # via pandas
 six==1.16.0
-    # via python-dateutil
+    # via
+    #   html5lib
+    #   python-dateutil
 soupsieve==2.4
     # via beautifulsoup4
+typing-extensions==4.5.0
+    # via pydantic
 uvicorn==0.20.0
     # via -r ./requirements.in
+webencodings==0.5.1
+    # via html5lib
 werkzeug==2.2.3
     # via flask
 yarl==1.8.2
