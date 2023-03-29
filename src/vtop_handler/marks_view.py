@@ -1,16 +1,22 @@
-from typing import Dict
+from typing import Any, Dict, Hashable, List, Union
 import aiohttp
 
 from .parsers import parse_marks_page
 from .payloads import get_marks_view_payload
 from .constants import HEADERS, MARKS_VIEW_PAGE
 
-async def   get_marks_dict(
-            sess: aiohttp.ClientSession, 
-            auth_id: str, 
-            sem_id: str
-    ) -> Dict[str, str]:
-    payload = get_marks_view_payload(sem_id , auth_id)
+marksObjectType = Dict[str, Union[str, None]]
+marksItemType = Union[List[marksObjectType], str, None, int, float]
+
+
+async def get_marks_dict(
+    sess: aiohttp.ClientSession,
+    roll_no: str,
+    sem_id: str
+) -> List[Dict[Hashable, marksItemType]]:
+    payload = get_marks_view_payload(sem_id, roll_no)
     async with sess.post(MARKS_VIEW_PAGE, data=payload, headers=HEADERS) as resp:
         html = await resp.text()
+        with open(f'sinlge-sem_marks-{roll_no}.html', 'w') as f:
+            f.write(html)
         return parse_marks_page(html)

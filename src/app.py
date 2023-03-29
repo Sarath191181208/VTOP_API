@@ -205,13 +205,13 @@ async def get_download_links():
 @is_logged_in
 @may_throw
 async def fetch_marks():
-    raise_if_not_args_passed(request.form, 'sem_id', 'auth_id')
+    raise_if_not_args_passed(request.form, 'sem_id', 'roll_no')
     sem_id = request.form['sem_id']
-    auth_id = request.form['auth_id']
+    roll_no = request.form['roll_no']
 
     cookies = get_cookies()
     async with aiohttp.ClientSession(cookies=cookies) as sess:
-        marks_dict = await get_marks_dict(sess, auth_id, sem_id)
+        marks_dict = await get_marks_dict(sess, roll_no, sem_id)
     return jsonify(marks_dict), 200
 
 
