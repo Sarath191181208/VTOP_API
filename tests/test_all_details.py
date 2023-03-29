@@ -1,5 +1,4 @@
 import asyncio
-import os
 import aiohttp
 import pytest
 from vtop_handler import (
@@ -9,20 +8,14 @@ from vtop_handler import (
     get_student_profile,
     get_timetable)
 
-import dotenv
-dotenv.load_dotenv()
-
-USERNAME = os.getenv('VTOP_USERNAME_1', None)
-PASSWORD = os.getenv('VTOP_PASSWORD_1', None)
-VITEEE_USERNAME_1 = os.getenv('VITEEE_USERNAME_1', None)
-VITEEE_PASSWORD_1 = os.getenv('VITEEE_PASSWORD_1', None)
-FRESHER_USERNAME_1 = os.getenv('FRESHER_USERNAME_1', None)
-FRESHER_PASSWORD_1 = os.getenv('FRESHER_PASSWORD_1', None)
-
-for i in [USERNAME, PASSWORD,
-          VITEEE_USERNAME_1, VITEEE_PASSWORD_1,
-          FRESHER_USERNAME_1, FRESHER_PASSWORD_1]:
-    assert i is not None, "Please set the environment variables"
+from user_names_passwords import (
+    USERNAME,
+    PASSWORD,
+    VITEEE_USERNAME_1,
+    VITEEE_PASSWORD_1,
+    FRESHER_USERNAME_1,
+    FRESHER_PASSWORD_1
+)
 
 
 async def get_all_details(sess: aiohttp.ClientSession, user_name: str):
@@ -60,4 +53,4 @@ async def test_all_details(username, password):
         all_details = await get_all_details(sess, user_name)
 
         for k, v in all_details.items():
-            assert v is not None, f"Failed to get {k}"
+            assert v is not None or len(v) == 0 , f"Failed to get {k}"
