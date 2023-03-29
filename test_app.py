@@ -14,8 +14,8 @@ import os
 import dotenv
 dotenv.load_dotenv()
 
-username = os.getenv('VTOP_USERNAME', "")
-password = os.getenv('VTOP_PASSWORD', "")
+username = os.getenv('VTOP_USERNAME_1', "")
+password = os.getenv('VTOP_PASSWORD_1', "")
 
 async def get_all_details(sess: aiohttp.ClientSession, user_name: str):
     tasks = [
