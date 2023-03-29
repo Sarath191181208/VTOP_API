@@ -1,5 +1,3 @@
-from src.vtop_handler.marks_view import get_marks_dict
-from src.vtop_handler.curriculum import get_curriculum_info
 import logging
 from typing import Dict, Tuple
 from flask import Flask, Response, jsonify, request, session
@@ -22,7 +20,8 @@ from src.vtop_handler.course_page_handler import (
 from src.vtop_handler import get_timetable, get_attendance, get_acadhistory
 from src.vtop_handler import get_academic_calender, get_faculty_details
 from src.vtop_handler import generate_session, get_student_profile
-
+from src.vtop_handler.marks_view import get_marks_dict
+from src.vtop_handler.curriculum import get_curriculum_info
 
 
 PORT = 5000

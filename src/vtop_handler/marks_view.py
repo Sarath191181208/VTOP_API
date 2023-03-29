@@ -1,9 +1,9 @@
 from typing import Dict
 import aiohttp
 
-from src.vtop_handler.parsers.parser_semester_marks import parse_marks_page
-from src.vtop_handler.payloads import get_marks_view_payload
-from src.vtop_handler.constants import HEADERS, MARKS_VIEW_PAGE
+from .parsers import parse_marks_page
+from .payloads import get_marks_view_payload
+from .constants import HEADERS, MARKS_VIEW_PAGE
 
 async def   get_marks_dict(
             sess: aiohttp.ClientSession, 

@@ -2,7 +2,7 @@ from typing import Callable
 
 import aiohttp
 
-from src.vtop_handler.models.curriculm_models import CurriculumInfo
+from .models.curriculm_models import CurriculumInfo
 
 from .parsers import get_curriculum
 from .payloads import get_my_curriculum_payload

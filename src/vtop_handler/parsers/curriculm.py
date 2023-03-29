@@ -1,7 +1,7 @@
 from typing import List
 import pandas as pd
 
-from src.vtop_handler.models.curriculm_models import ( 
+from ..models.curriculm_models import ( 
     CreditInfo, CurriculumInfo, SingleCurriculumCourse)
 
 
