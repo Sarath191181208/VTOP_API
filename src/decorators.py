@@ -34,7 +34,8 @@ def may_throw(func):
 
 def raise_if_not_args_passed(request_args: Dict[str, str], *args: str):
     """
-    Checks if the request args contains the required args if not raises a BadRequestException
+    Checks if the request args contains the required args if not 
+    raises a BadRequestException
     """
     not_passed_args = [arg for arg in args if arg not in request_args.keys()]
     if len(not_passed_args) > 0:
