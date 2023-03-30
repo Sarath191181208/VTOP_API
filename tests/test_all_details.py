@@ -8,15 +8,7 @@ from vtop_handler import (
     get_student_profile,
     get_timetable)
 
-from user_names_passwords import (
-    USERNAME,
-    PASSWORD,
-    VITEEE_USERNAME_1,
-    VITEEE_PASSWORD_1,
-    FRESHER_USERNAME_1,
-    FRESHER_PASSWORD_1
-)
-
+from user_names_passwords import username_password_list
 
 async def get_all_details(sess: aiohttp.ClientSession, user_name: str):
     tasks = [
@@ -40,11 +32,7 @@ async def get_all_details(sess: aiohttp.ClientSession, user_name: str):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("username, password", [
-    (USERNAME, PASSWORD),
-    (VITEEE_USERNAME_1, VITEEE_PASSWORD_1),
-    (FRESHER_USERNAME_1, FRESHER_PASSWORD_1)
-])
+@pytest.mark.parametrize("username, password", username_password_list)
 async def test_all_details(username, password):
     async with aiohttp.ClientSession() as sess:
         user_name = await generate_session(username, password, sess)
