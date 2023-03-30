@@ -17,6 +17,4 @@ async def get_marks_dict(
     payload = get_marks_view_payload(sem_id, roll_no)
     async with sess.post(MARKS_VIEW_PAGE, data=payload, headers=HEADERS) as resp:
         html = await resp.text()
-        with open(f'sinlge-sem_marks-{roll_no}.html', 'w') as f:
-            f.write(html)
         return parse_marks_page(html)
