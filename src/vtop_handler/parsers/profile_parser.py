@@ -30,9 +30,9 @@ def parse_profile(profile_html: str) -> Dict:
 
     return nan_to_none_in_dict({
         "name": df_personal_info.iloc[2, 1],
-        "branch": df_personal_info.iloc[20, 1],
+        "branch": df_personal_info.iloc[21, 1],
         "program": df_personal_info.iloc[19, 1],
-        "regNo": df_personal_info.iloc[17, 1],
+        "regNo": df_personal_info.iloc[18, 1],
         "appNo": df_personal_info.iloc[1, 1],
         "school": df_personal_info.iloc[21, 1],
         "email": df_personal_info.iloc[31, 1],
