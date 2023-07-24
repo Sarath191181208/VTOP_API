@@ -18,10 +18,9 @@
     >     asyncio.run(main())
 """
 
-from vtop_handler.parsers import parse_single_subject_attendance
 from .constants import HEADERS, VTOP_ATTENDANCE_URL, SEM_IDS, VTOP_SINGLE_SUBJECT_ATTENDANCE_URL
 from .payloads import generate_payload_attendance_for_subject, get_attendance_payload
-from .parsers import parse_attendance
+from .parsers import parse_attendance, parse_single_subject_attendance 
 
 import asyncio
 import aiohttp
