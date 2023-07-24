@@ -77,6 +77,7 @@ async def get_attendance(sess, username, semesterID=None):
                 |    |  "courseName" : "Operating Systems" 
                 |    |  "code" : "CSE2005" 
                 |    |  "type" : "Embedded Theory",
+                |    |  "subjectID" : "AP2023241000001" // Subject ID
                 |    |  "updatedOn" : "Wed Apr 15 04:27:10 2020"  // Time at which attendance was fetched
                 |    }
                 }
