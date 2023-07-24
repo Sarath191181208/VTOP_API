@@ -128,6 +128,7 @@ async def clear_coookies():
     if "cookie" in session:
         session.pop('cookie')
         session.pop('auth_id')
+    return jsonify(None)
 
 
 @app.route('/api/v1/get_semester_names_codes', methods=['POST'])
