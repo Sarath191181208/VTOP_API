@@ -18,15 +18,16 @@
     >     asyncio.run(main())
 """
 
-from .constants import HEADERS, VTOP_ATTENDANCE_URL, SEM_IDS
-from .payloads import get_attendance_payload
+from vtop_handler.parsers import parse_single_subject_attendance
+from .constants import HEADERS, VTOP_ATTENDANCE_URL, SEM_IDS, VTOP_SINGLE_SUBJECT_ATTENDANCE_URL
+from .payloads import generate_payload_attendance_for_subject, get_attendance_payload
 from .parsers import parse_attendance
 
 import asyncio
 import aiohttp
-from typing import Tuple
+from typing import Dict, List, Tuple, Union
 
-async def _get_attendance_from_payload(sess:aiohttp.ClientSession, payload:dict) -> Tuple[dict, bool]:
+async def _get_attendance_from_payload(sess:aiohttp.ClientSession, payload: Dict, username: str) -> Tuple[dict, bool]:
     """
         Returns the attendance of the user in the form of a dictionary using the payload given
         which is mentioned above in the file containing this function.
@@ -40,6 +41,22 @@ async def _get_attendance_from_payload(sess:aiohttp.ClientSession, payload:dict)
         if resp.status == 200:
             try: 
                 attendance = parse_attendance(attendance_html)
+            
+                # get the data for the subject ids 
+                tasks = [
+                    asyncio.create_task(
+                        get_single_subject_attendance(
+                    sess, username, attendance[slot].get("subjectId", None), slot))   
+                    for slot in attendance.keys()
+                ]
+
+                # wait for all the tasks to complete
+                await asyncio.gather(*tasks)
+
+                # update the attendance dict with the data
+                for slot, task in zip(attendance.keys(), tasks):
+                    attendance[slot]["history"] = await task
+
                 valid = True
             except Exception as e:
                 print(f"payload: {payload}")
@@ -91,12 +108,42 @@ async def get_attendance(sess, username, semesterID=None):
     attendance = {}
     for semID in set(SEM_IDS):
         payload = get_attendance_payload(username, semID)
-        attendance, valid = await _get_attendance_from_payload(sess, payload)
+        attendance, valid = await _get_attendance_from_payload(sess, payload, username)
         if valid:
             break
 
     return (attendance, valid)
 
+async def get_single_subject_attendance(sess: aiohttp.ClientSession, 
+        username: str, 
+        subjectID: Union[str, None], 
+        slotName: str) -> List[Dict[str, str]]:
+    """
+        Returns the attendance of the user in the form of a dictionary.
+        The dictionary is of the form 
 
+        Parameters:
+        -----------
+        sess: aiohttp.ClientSession
+            The session object to be used for making the request.
+        username: str
+            The username of the user whose attendance is to be fetched.
+        subjectID: str
+            The subject ID of the user whose attendance is to be fetched.
 
+        Returns:
+        -------
+        [
+            {
+                "Attendance Date":"23-May-2023",
+                "Attendance Slot":"B1",
+                "Day And Timing":"TUE,09:00-09:50",
+                "Attendance Status":"Present"
+            },
+        ]
 
+    """
+    if subjectID is None: return []
+    attd_payload = generate_payload_attendance_for_subject(subjectID, slotName, username)
+    async with sess.post(VTOP_SINGLE_SUBJECT_ATTENDANCE_URL, data=attd_payload, headers=HEADERS) as resp:
+        return parse_single_subject_attendance(await resp.text())

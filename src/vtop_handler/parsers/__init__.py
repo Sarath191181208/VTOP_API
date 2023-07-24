@@ -15,3 +15,5 @@ from .parse_faculty_details import parse_faculty_details
 from .parse_course_page import parse_course_page_semester_names, parse_course_names_values, parse_to_get_view_urls, parse_reference_material_links
 from .parser_semester_marks import parse_marks_page
 from .curriculm import get_curriculum
+
+from .parse_single_subject_attendance import parse_single_subject_attendance

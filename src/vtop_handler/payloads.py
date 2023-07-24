@@ -90,3 +90,11 @@ def get_my_curriculum_payload(roll_no: str):
         "authorizedID": roll_no,
         "nocache": "@ (new Date().getTime())"
     }
+
+def generate_payload_attendance_for_subject(class_id: str,slot_name: str, auth_id: str):
+    return {
+        "classId": class_id,
+        "slotName": slot_name.replace("+", " "),
+        "authorizedID": auth_id,
+        "x": get_curr_time_vtop_format()
+    }

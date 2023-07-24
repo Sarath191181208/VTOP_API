@@ -33,7 +33,6 @@ def get_sub_ids(attd_html: str) -> Dict[str, str]:
     return slot_subid_dict
 
 
-
 def parse_attendance(attendance_html: str) -> Dict[str, Dict] :
     """
         Parses the attendance html and returns a dictionary of attendance details.
@@ -50,7 +49,6 @@ def parse_attendance(attendance_html: str) -> Dict[str, Dict] :
     # create a column for subject ids and fill it with the subject ids
     df['Subject ID'] = df['Slot'].apply(lambda x: slot_subid_dict.get(x, None))
 
-
     attendace_dict = dict()
     # The last column is for credits
     for row in range(df.shape[0]-1):
@@ -65,7 +63,7 @@ def parse_attendance(attendance_html: str) -> Dict[str, Dict] :
             "courseName" : df.iloc[row]['Course Title'],
             "code" : df.iloc[row]['Course Code'],
             "type" : df.iloc[row]['Course Type'],
-            "subjectID" : df.iloc[row]['Subject ID'],
+            "subjectId" : df.iloc[row]['Subject ID'],
             "updatedOn" : datetime.datetime.now().strftime("%c")
         }
     # print(attendace_dict)
