@@ -1,5 +1,6 @@
 import re
-from typing import Dict, Union
+from typing import Any, Dict, Union
+from annotated_types import T
 import pandas as pd
 import datetime
 
@@ -58,3 +59,20 @@ def may_throw(func):
                 f"Error in {func.__name__} with args: {args} and kwargs: {kwargs}")
             print(f"Error: {e}")
     return wrapper
+
+
+def get_item(arr: list[T], idx: int) -> Union[T, None]:
+    """
+    returns the first element of the given array
+    """
+    return arr[idx] if len(arr) > idx else None
+
+def get_from_df(df: Union[pd.DataFrame, None], row: int, col: int) -> Union[Any, None]:
+    """
+    returns the value at the given row and col in the given dataframe
+    """
+    if df is None: return None
+    try:
+        return df.iloc[row, col]
+    except IndexError:
+        return None

@@ -3,7 +3,7 @@ from typing import Dict
 from bs4 import BeautifulSoup
 import pandas as pd
 
-from ..utils import find_image, nan_to_none_in_dict
+from ..utils import find_image, get_from_df, get_item, nan_to_none_in_dict
 
 
 def parse_profile(profile_html: str) -> Dict:
@@ -11,16 +11,12 @@ def parse_profile(profile_html: str) -> Dict:
     base64_img = find_image(str(img_col))
     raw_df = pd.read_html(profile_html)
     df_personal_info = raw_df[0]
-    df_proctor_info = raw_df[3]
+    df_proctor_info = get_item(raw_df, 3)
 
     application_number = df_personal_info.iloc[1, 1]
 
     # getting proctor info
-    proctorMobileNumber = None
-    try:
-        proctorMobileNumber = df_proctor_info.iloc[9, 2]
-    except IndexError:
-        ...
+    proctorMobileNumber = get_from_df(df_proctor_info, 6, 1)
 
     # Generating an API Token
     api_gen = application_number
@@ -36,8 +32,8 @@ def parse_profile(profile_html: str) -> Dict:
         "appNo": df_personal_info.iloc[1, 1],
         "school": df_personal_info.iloc[21, 1],
         "email": df_personal_info.iloc[31, 1],
-        "proctorEmail": df_proctor_info.iloc[7, 1],
-        "proctorName": df_proctor_info.iloc[2, 1],
+        "proctorEmail": get_from_df(df_proctor_info,7, 1),
+        "proctorName": get_from_df(df_proctor_info,2, 1),
         "proctorMobileNumber": proctorMobileNumber,
         "profileImageBase64": base64_img,
         'token': token
