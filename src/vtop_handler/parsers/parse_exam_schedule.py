@@ -21,6 +21,9 @@ def get_exam_row_data(row):
     }
     #  connvert  NaN to None
     data = {k: None if pd.isna(v) else v for k, v in data.items()}
+     # Check if "Course Code" starts with "STS" and set "Seat Location" as "Seat No" 
+    if data["Course Code"].startswith("STS"):
+        data["Seat Location"] = data["Seat No"]
     return data
 
 def parse_exam_schedule(exam_schedule_html: str) -> Dict:
