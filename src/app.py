@@ -1,5 +1,12 @@
 import logging
 from typing import Dict, Tuple
+from const import (
+    IS_VIT_AP_SERVER_DOWN,
+    PARTIAL_CONTENT,
+    SAMPLE_RESPONSE,
+    SUCCESS_STATUS_CODE,
+    UNAUTHORIZED_STATUS_CODE,
+)
 from flask import Flask, Response, jsonify, make_response, request, session
 from flask_session import Session
 from flask_cors import CORS
@@ -71,21 +78,22 @@ def hello_world():
 async def all_details():
     user_name = request.form.get("username", "")
     passwd = request.form.get("password", "")
-    print(f"username: {user_name}, password: {passwd}")
-
     throw_if_invalid_username_password(user_name, passwd)
+
+    if IS_VIT_AP_SERVER_DOWN:
+        return jsonify(SAMPLE_RESPONSE), PARTIAL_CONTENT
 
     async with aiohttp.ClientSession() as sess:
         user_name = await generate_session(user_name, passwd, sess)
         if user_name is None:
-            raise InvalidCredentialsException(status_code=401)
+            raise InvalidCredentialsException(status_code=UNAUTHORIZED_STATUS_CODE)
         all_details_futures = get_all_details_futures(sess, user_name)
         # awaiting all details to arrive and converting to dict
         all_detials = {
             k: (await d_future)[0] for k, d_future in all_details_futures.items()
         }
     # return jsonify(all_detials, ), 200
-    response = make_response(jsonify(all_detials), 200)
+    response = make_response(jsonify(all_detials), SUCCESS_STATUS_CODE)
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response
 
@@ -100,7 +108,7 @@ async def exam_schedule():
     async with aiohttp.ClientSession() as sess:
         user_name = await generate_session(user_name, passwd, sess)
         if user_name is None:
-            raise InvalidCredentialsException(status_code=401)
+            raise InvalidCredentialsException(status_code=UNAUTHORIZED_STATUS_CODE)
         all_detials, is_valid = await get_exam_schedule(sess, user_name)
 
     return jsonify(all_detials), 200
@@ -126,7 +134,7 @@ async def login():
             .value
         )  # type: ignore
         if user_name is None:
-            raise InvalidCredentialsException(status_code=401)
+            raise InvalidCredentialsException(status_code=UNAUTHORIZED_STATUS_CODE)
 
     session["cookie"] = cookie
     session["auth_id"] = user_name
