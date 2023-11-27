@@ -2,6 +2,7 @@ aiohttp
 beautifulsoup4
 flask
 flask[async]
+flask-cors
 gunicorn
 lxml
 pandas
