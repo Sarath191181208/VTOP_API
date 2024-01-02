@@ -1,12 +1,6 @@
 import logging
 from typing import Dict, Tuple
-from const import (
-    IS_VIT_AP_SERVER_DOWN,
-    PARTIAL_CONTENT,
-    SAMPLE_RESPONSE,
-    SUCCESS_STATUS_CODE,
-    UNAUTHORIZED_STATUS_CODE,
-)
+
 from flask import Flask, Response, jsonify, make_response, request, session
 from flask_session import Session
 from flask_cors import CORS
@@ -32,7 +26,14 @@ from src.vtop_handler import get_academic_calender, get_faculty_details
 from src.vtop_handler import generate_session, get_student_profile
 from src.vtop_handler.marks_view import get_marks_dict
 from src.vtop_handler.curriculum import get_curriculum_info
-from src.const import CORS_RESOURCE_LIST
+from src.const import (
+    CORS_RESOURCE_LIST,
+    IS_VIT_AP_SERVER_DOWN,
+    PARTIAL_CONTENT_STATUS_CODE,
+    SAMPLE_RESPONSE,
+    SUCCESS_STATUS_CODE,
+    UNAUTHORIZED_STATUS_CODE,
+)
 
 
 PORT = 5000
@@ -76,12 +77,15 @@ def hello_world():
 @app.route("/api/v1/alldetails", methods=["POST"])
 @may_throw
 async def all_details():
-    user_name = request.form.get("username", "")
-    passwd = request.form.get("password", "")
+    user_name = request.form.get("username", None)
+    passwd = request.form.get("password", None)
     throw_if_invalid_username_password(user_name, passwd)
 
+    if user_name is None or passwd is None:
+        raise BadRequestException("You must provide username and password to access this route!")
+
     if IS_VIT_AP_SERVER_DOWN:
-        return jsonify(SAMPLE_RESPONSE), PARTIAL_CONTENT
+        return jsonify(SAMPLE_RESPONSE), PARTIAL_CONTENT_STATUS_CODE
 
     async with aiohttp.ClientSession() as sess:
         user_name = await generate_session(user_name, passwd, sess)
