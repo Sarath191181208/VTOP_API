@@ -62,12 +62,11 @@ def get_all_details_futures(sess: aiohttp.ClientSession, user_name: str):
     }
 
 
-def get_cookies() -> Dict[str, str]:
+def get_cookies(sess_cookie: str) -> Dict[str, str]:
     return {
-        "JSESSIONID": session.get("cookie"),  # type: ignore
+        "JSESSIONID": sess_cookie,  # type: ignore
         "loginUserType": "vtopuser",
     }
-
 
 @app.route("/")
 def hello_world():
@@ -220,7 +219,7 @@ async def fetch_marks():
     sem_id = request.form["sem_id"]
     roll_no = request.form["roll_no"]
 
-    cookies = get_cookies()
+    cookies = get_cookies(session.get("cookie"))
     async with aiohttp.ClientSession(cookies=cookies) as sess:
         marks_dict = await get_marks_dict(sess, roll_no, sem_id)
     return jsonify(marks_dict), 200
@@ -258,10 +257,24 @@ async def fetch_marks():
 async def get_curriculum() -> Tuple[Response, int]:
     raise_if_not_args_passed(request.form, "roll_no")
     auth_id = request.form["roll_no"]
-    cookies = get_cookies()
+    cookies = get_cookies(session.get("cookie"))
     async with aiohttp.ClientSession(cookies=cookies) as sess:
         curriculum = await get_curriculum_info(sess, auth_id)
     return jsonify(curriculum.dict()), 200
+
+@app.route("/api/v2/get_curriculum", methods=["POST"])
+@may_throw
+async def get_curriculum2() -> Tuple[Response, int]:
+    raise_if_not_args_passed(request.form, "roll_no", "cookie")
+    auth_id = request.form["roll_no"]
+    cookie = request.form["cookie"]
+    cookies = get_cookies(cookie)
+    async with aiohttp.ClientSession(cookies=cookies) as sess:
+        curriculum = await get_curriculum_info(sess, auth_id)
+
+    response = make_response(jsonify(curriculum.dict()), SUCCESS_STATUS_CODE)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
 
 
 @app.route("/api/v1/faculty", methods=["POST"])
