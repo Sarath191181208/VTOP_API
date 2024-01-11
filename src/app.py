@@ -141,7 +141,10 @@ async def login():
 
     session["cookie"] = cookie
     session["auth_id"] = user_name
-    return jsonify({"cookie": cookie}), 200
+
+    response = make_response(jsonify({"cookie": cookie}), SUCCESS_STATUS_CODE)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
 
 
 @app.route("/api/v1/clear_cookies", methods=["POST"])
@@ -271,7 +274,6 @@ async def get_curriculum2() -> Tuple[Response, int]:
     cookies = get_cookies(cookie)
     async with aiohttp.ClientSession(cookies=cookies) as sess:
         curriculum = await get_curriculum_info(sess, auth_id)
-
     response = make_response(jsonify(curriculum.dict()), SUCCESS_STATUS_CODE)
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response
