@@ -13,103 +13,62 @@
     > if __name__ == "__main__":
     >   asyncio.run(main())
 """
-import io
-import os
 
-import json
-import base64
-import numpy as np
 from bs4 import BeautifulSoup
 from typing import Tuple 
-
-import PIL
-from PIL import Image
-
 import aiohttp
 
 from typing import Union
 
+
 from .Exceptions.captcha_failure import CaptchaFailure
 from .Exceptions.invalid_credentials import InvalidCredentialsException
+from .Exceptions.invalid_crsf_token import InvalidCRSFToken 
 
 from .utils import find_image
-from .constants import VTOP_DO_LOGIN_URL, VTOP_LOGIN_URL, VTOP_BASE_URL, HEADERS
+from .constants import  VTOP_LOGIN_URL, VTOP_BASE_URL, HEADERS, VTOP_PRE_LOGIN, VTOP_LOGIN_PAGE_REDIRECT
+from .captcha_solver import solve_captcha
 
-CAPTCHA_DIM = (180, 45)
-CHARACTER_DIM = (30, 32)
-
-# opening bitmpas of the characters to compare
-curr_dir = os.path.dirname(__file__)
-bitmaps_path = os.path.join(curr_dir, 'bitmaps.json')
-BITMAPS = json.load(open(bitmaps_path))
-BITMAPS = {k: np.array(v) for k, v in BITMAPS.items()}
-
-def _img_match_percentage(img_char_matrix: np.ndarray, char_matrix: np.ndarray) -> float:
-    """
-    This function returns the percentage of matching pixels between two images
-    """
-
-    match_count = 1
-    mismatch_count = 1
-
-    match_count = np.sum(img_char_matrix == char_matrix)
-    w, h = img_char_matrix.shape
-    mismatch_count = w*h - match_count
-
-    # calculating the percentage of matching pixels
-    percent_match = match_count / mismatch_count
-    return percent_match 
-
-def _identify_chars(img: np.ndarray)-> str:
-    """
-    This function identifies and returns the captcha
-    """
-
-    img_width, img_height = CAPTCHA_DIM
-    char_width, char_height = CHARACTER_DIM
-
-    up_thresh, low_thresh = 12, 44
-    # helper function to crop the image
-        
-    captcha =""
-
-    # loop through individual characters
-    for i in range(0, img_width, char_width):
-        img_char_matrix = img[up_thresh:low_thresh, i: i+char_width]
-        # caluculating the matching percentage
-        matches = {}
-        global BITMAPS
-        for char, char_matrix in BITMAPS.items():
-            perc = _img_match_percentage(img_char_matrix, char_matrix)
-            matches.update({perc: char.upper()})
-        try:
-            captcha += matches[max(matches.keys())]
-        except ValueError:
-            captcha += "0"
-    print(captcha)
-    return captcha
-
-def _str_to_img(src: str) -> np.ndarray:
-    # decoding the base64 string i.e string -> bytes -> image
-    im = base64.b64decode(src)
-    img = Image.open(io.BytesIO(im)).convert("L")
-    img = np.array(img)
-    return img
-
-def _solve_captcha(img: np.ndarray) -> Union[str, None]:
-    """solves the captcha and returns the solution if solved else returns None"""
-
-    if img is None:
-        print("Captcha not found, returning .... None")
+def get_csrf_from_input(html: str) -> str | None:
+    soup = BeautifulSoup(html, 'html.parser')
+    csrf_input = soup.find('input', attrs={'name': '_csrf'})
+    if csrf_input is None: 
         return None
-    captcha = None
-    try:
-        captcha = _identify_chars(img)
-    except Exception as e:
-        print(e)
-    return captcha
+    csrf_token = csrf_input.get("value")
+    return csrf_token
 
-async def generate_session(username:str, password:str, sess:  aiohttp.ClientSession) -> Union[str, None]:            # username:
+async def init(sess: aiohttp.ClientSession) -> str | None: 
+    _html = await sess.get(VTOP_BASE_URL,headers = HEADERS)
+    return get_csrf_from_input(await _html.text())
+
+async def setup(sess: aiohttp.ClientSession, csrf_token: str):
+    payload = {
+        "_csrf": csrf_token,
+        "flag": "VTOP"
+    }
+    await sess.post(VTOP_PRE_LOGIN, data=payload, headers = HEADERS)
+
+async def page(sess: aiohttp.ClientSession):
+    await sess.get(VTOP_LOGIN_PAGE_REDIRECT, headers = HEADERS)
+
+async def get_captcha(sess: aiohttp.ClientSession) -> tuple[str, str | None]:
+    # going to the main page without this we will get the following response
+    # " You are logged out due to inactivity for more than 15 minutes "
+    # getting the login page think of it as clicking the login button
+    token = await init(sess)
+    if token is None: 
+        raise InvalidCRSFToken(status_code=500)
+    await setup(sess, token)
+    await page(sess)
+    async with sess.get(VTOP_LOGIN_URL, headers = HEADERS) as resp:
+        login_html = await resp.text()
+        captcha = find_image(login_html)
+        if captcha is None: 
+            return token, None
+    return token, captcha
+
+async def generate_session(username:str, password:str, sess:  aiohttp.ClientSession
+                           ) -> Tuple[Union[str, None], str]:
     """
         This function generates a session with VTOP. Solves captcha
         
@@ -124,54 +83,51 @@ async def generate_session(username:str, password:str, sess:  aiohttp.ClientSess
 
         Returns:
         --------
-        - session : requests.Session | None
-            Session object with the session
         - username : str | None
             Username of the user
+        - crsf_token : str 
+            CSRF token for the session
     """
+    crsf_token, captcha_src = await get_captcha(sess)
 
-    # going to the main page without this we will get the following response
-    # " You are logged out due to inactivity for more than 15 minutes "
-    await sess.get(VTOP_BASE_URL,headers = HEADERS)
-    # getting the login page think of it as clicking the login button
-    async with sess.post(VTOP_LOGIN_URL, headers = HEADERS) as resp:
-        login_html = await resp.text()
-        # login_html = await sess.post(VTOP_LOGIN_URL,headers = HEADERS)
-        # finding the captcha image form the login page
-        captcha_src = find_image(login_html)
-        # return if no captcha found
-        if captcha_src is None: return None
-        # converting the captcha string to a image
-        captcha_img = _str_to_img(captcha_src)
-        # solving the captcha
-        captcha = _solve_captcha(captcha_img)
-        # doing the login
-        payload = {
-            "uname" : username,
-            "passwd" : password,
-            "captchaCheck" : captcha
-        }
-        async with sess.post(VTOP_DO_LOGIN_URL, data = payload, headers = HEADERS) as resp:
-            post_login_html = await resp.text()
+    if captcha_src is None: 
+        raise CaptchaFailure("Captcha can't be given from the server")
 
-            soup = BeautifulSoup(post_login_html, 'lxml')
+    solved_captcha = solve_captcha(captcha_src)
 
-            invalid_credentials = soup.find('p', {"class": "box-title text-danger"})
-            print(invalid_credentials)
-            if invalid_credentials is not None:
+    payload = {
+        "_csrf":crsf_token, 
+        "username": username,    
+        "password": password,
+        "captchaStr": solved_captcha
+    }
+    async with sess.post(VTOP_LOGIN_URL, data = payload, headers = HEADERS) as resp:
+        post_login_html = await resp.text()
+        soup = BeautifulSoup(post_login_html, 'lxml')
+        error_type = soup.find('span', {"class": "text-danger", "role": "alert"})
+
+        if error_type is not None:
+            error_text = error_type.text.replace("\n", "").strip()
+            if error_text == "Invalid LoginId/Password":
                 raise InvalidCredentialsException(401)
+            if error_text == "Invalid Captcha":
+                raise CaptchaFailure("Captcha can't be solved")
 
-            recaptcha_soup = soup.find_all('a', {"class": "btn btn-success pull-right"})
-            if(len(recaptcha_soup) > 0): # i.e if the captcha isn't solved
-                print(recaptcha_soup)
-                raise CaptchaFailure("Captcha not solved")
+        with open("htmls/post_login_html.html", "w") as f:
+            f.write(post_login_html)
 
-            username = soup.find('input', {"id": "authorizedIDX"})
-            if username is None:
-                raise InvalidCredentialsException(401)
 
-            username = username.get('value')
-            return username
+        roll_no_ele = soup.find('span', {"class": "navbar-text text-light small fw-bold"})
+        if roll_no_ele is None:
+            raise InvalidCredentialsException(401)
+        
+        roll_no_text = roll_no_ele.text
+        crsf_token = get_csrf_from_input(post_login_html)
+    
+        if crsf_token is None:
+            raise InvalidCRSFToken(status_code=500)
+
+        return roll_no_text.split()[0], crsf_token
 
 async def get_valid_session(
     username: str, 
