@@ -24,6 +24,8 @@ ipython_config.py
 _captcha
 _responses
 _test
+_test2
+htmls
 
 # logs and tmp
 *.log
