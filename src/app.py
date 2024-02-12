@@ -48,11 +48,11 @@ Session(app)
 logging.basicConfig(filename="flask_logs.log", level=logging.DEBUG)
 
 
-def get_all_details_futures(sess: aiohttp.ClientSession, user_name: str):
-    profile_future = get_student_profile(sess, user_name)
-    timetable_future = get_timetable(sess, user_name)
-    attendance_future = get_attendance(sess, user_name)
-    academic_history_future = get_acadhistory(sess, user_name)
+def get_all_details_futures(sess: aiohttp.ClientSession, user_name: str, csrf_token: str):
+    profile_future = get_student_profile(sess, user_name, csrf_token)
+    timetable_future = get_timetable(sess, user_name, csrf_token)
+    attendance_future = get_attendance(sess, user_name, csrf_token )
+    academic_history_future = get_acadhistory(sess, user_name, csrf_token)
 
     return {
         "profile": profile_future,
@@ -87,10 +87,10 @@ async def all_details():
         return jsonify(SAMPLE_RESPONSE), PARTIAL_CONTENT_STATUS_CODE
 
     async with aiohttp.ClientSession() as sess:
-        user_name = await generate_session(user_name, passwd, sess)
+        user_name, csrf_token = await generate_session(user_name, passwd, sess)
         if user_name is None:
             raise InvalidCredentialsException(status_code=UNAUTHORIZED_STATUS_CODE)
-        all_details_futures = get_all_details_futures(sess, user_name)
+        all_details_futures = get_all_details_futures(sess, user_name, csrf_token)
         # awaiting all details to arrive and converting to dict
         all_detials = {
             k: (await d_future)[0] for k, d_future in all_details_futures.items()
