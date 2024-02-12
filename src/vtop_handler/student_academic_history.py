@@ -41,7 +41,7 @@ async def _get_acadhistory_from_payload(sess:aiohttp.ClientSession, payload:dict
             print(f"Error in getting acad history response {resp.status} with payload: ", payload)
     return (grades, valid)
 
-async def get_acadhistory(sess:aiohttp.ClientSession, id:str):
+async def get_acadhistory(sess:aiohttp.ClientSession, id:str, csrf_token: str):
     """
         Returns the academic history of the user in the form of a dictionary.
 
@@ -73,7 +73,7 @@ async def get_acadhistory(sess:aiohttp.ClientSession, id:str):
         valid: bool
             True if the request was successful.
     """
-    payload = get_academic_profile_payload(id)
+    payload = get_academic_profile_payload(id, csrf_token)
     grades, valid = await _get_acadhistory_from_payload(sess, payload)
 
     return (grades, valid)

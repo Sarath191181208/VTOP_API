@@ -66,7 +66,7 @@ async def _get_attendance_from_payload(sess:aiohttp.ClientSession, payload: Dict
     valid = False if attendance == {} else valid
     return (attendance, valid)
 
-async def get_attendance(sess, username, semesterID=None):
+async def get_attendance(sess, username, csrf_token: str, semesterID=None):
     """
         Returns the attendance of the user in the form of a dictionary.
         The dictionary is of the form 
@@ -106,7 +106,7 @@ async def get_attendance(sess, username, semesterID=None):
     valid = False
     attendance = {}
     for semID in set(SEM_IDS):
-        payload = get_attendance_payload(username, semID)
+        payload = get_attendance_payload(username, semID, csrf_token)
         attendance, valid = await _get_attendance_from_payload(sess, payload, username)
         if valid:
             break

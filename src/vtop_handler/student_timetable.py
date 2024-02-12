@@ -56,6 +56,7 @@ async def _get_time_table_from_payload(sess:aiohttp.ClientSession, payload: Dict
 async def get_timetable(
     sess: aiohttp.ClientSession, 
     username: str,
+    csrf_token: str,
     semesterID: Union[str, None] = None) -> Tuple[
         Dict,  # timetable
         bool]: # valid i.e sucess of the session
@@ -107,7 +108,7 @@ async def get_timetable(
     valid = False
     time_table = {}
     for semID in set(SEM_IDS):
-        payload = get_timetable_payload(username, semID)
+        payload = get_timetable_payload(username, semID, csrf_token)
         time_table, valid = await _get_time_table_from_payload(sess, payload)
         if valid:
             break
