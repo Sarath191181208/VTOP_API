@@ -13,7 +13,7 @@ def _get_course_code_dic(time_table_soup: BeautifulSoup) -> Dict[str, str]:
     """
 
     course_labels_soup = time_table_soup.find_all(
-        'td', {'style': lambda s: 'padding: 3px; font-size: 12px; border-color: #3c8dbc;vertical-align: middle;text-align: left;' in s})
+        'td', {'style': lambda s: 'padding: 3px; font-size: 12px; border-color: #b2b2b2;vertical-align: middle;' in s})
     # getting the course data i.e the course column in the first table
     course_labels = [i.getText().split("-") for i in course_labels_soup]
 
