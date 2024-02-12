@@ -18,13 +18,9 @@ def parse_acadhistory(acad_html: str)-> Dict[str, List]:
 
     grades_df = raw_df[1].copy()
     summary_df = raw_df[-1].copy()
-
-    # cleaning summary df 
-    cols = summary_df.iloc[0]
-    summary_df.drop(0, axis=0, inplace=True)
-    summary_df.columns = cols
     # convering summary to dict
-    dic = {"summary":{k.replace(" ", "").replace("Grades", "") : float(summary_df.iloc[0][k]) for k in cols}} # type: ignore
+    cols = summary_df.columns
+    dic = {"summary":{k.replace(" ", "").replace("Grades", "") : float(summary_df.iloc[0][k]) for k in cols[:-1]}} # type: ignore
     # getting the cols of the grades df
     cols = grades_df.iloc[1]
     # the first two rows are just repeated i.e ele's and col names
