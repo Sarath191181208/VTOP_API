@@ -6,32 +6,34 @@
 from .utils import get_curr_time_vtop_format
 
 
-def get_profile_payload(user_name):
+def get_profile_payload(user_name: str, csrf_token: str):
     return {
         "verifyMenu": "true",
-        "winImage": "undefined",
+        "_csrf": csrf_token,
         "authorizedID": user_name,
         "nocache": "@(new Date().getTime())"}
 
 
-def get_timetable_payload(username,
-                          semID):
+def get_timetable_payload(username: str,
+                          semID: str, csrf_token: str):
     return {"semesterSubId": semID,
             "authorizedID": username,
+            "_csrf": csrf_token,
             "x": get_curr_time_vtop_format()}
 
 
-def get_attendance_payload(username,
-                           semId):
+def get_attendance_payload(username: str,
+                           semId: str, csrf_token: str):
     return {"semesterSubId": semId,
             "authorizedID": username,
+            "_csrf": csrf_token,
             "x": get_curr_time_vtop_format()}
 
 
-def get_academic_profile_payload(username):
+def get_academic_profile_payload(username: str, csrf_token: str):
     return {"verifyMenu": "true",
-            "winImage": "undefined",
             "authorizedID": username,
+            "_csrf": csrf_token,
             "nocache": "@(new Date().getTime())"}
 
 
