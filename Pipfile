@@ -1,0 +1,26 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+aiohttp = "*"
+beautifulsoup4 = "*"
+flask = {extras = ["async"], version = "*"}
+flask-cors = "*"
+gunicorn = "*"
+lxml = "*"
+pandas = "*"
+pillow = "*"
+python-dotenv = "*"
+flask-session = "*"
+uvicorn = "*"
+colorama = "*"
+html5lib = "*"
+pydantic = "*"
+
+[dev-packages]
+ipykernel = "*"
+
+[requires]
+python_version = "3.11"
