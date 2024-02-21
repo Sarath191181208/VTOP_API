@@ -53,6 +53,6 @@ def _str_to_img(src: str) -> np.ndarray:
     # decoding the base64 string i.e string -> bytes -> image
     im = base64.b64decode(src)
     img = Image.open(io.BytesIO(im)).convert("L")
-    img.save("./_test/saves/img.png")
+    # img.save("./_test/saves/img.png")
     img = np.array(img)
     return img
