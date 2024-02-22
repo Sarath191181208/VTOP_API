@@ -43,8 +43,10 @@ def get_exam_schedule_payload(username,
             "authorizedID": username, "_csrf": crsf_token}
 
 
-def get_course_page_semeseter_names_payload(auth_id):
-    return {"verifyMenu": True,
+def get_course_page_semeseter_names_payload(auth_id, crsf_token: str):
+    return {
+            "_csrf": crsf_token,
+            "verifyMenu": True,
             "winImage": None,
             "authorizedID": auth_id,
             "nocache": "@(new Date().getTime())"}
@@ -85,8 +87,9 @@ def get_marks_view_payload(sem_id: str,
     }
 
 
-def get_my_curriculum_payload(roll_no: str):
+def get_my_curriculum_payload(roll_no: str, csrf_token: str):
     return {
+        "_csrf": csrf_token,
         "verifyMenu": "true",
         "winImage": "undefined",
         "authorizedID": roll_no,
