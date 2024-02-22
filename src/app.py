@@ -109,10 +109,10 @@ async def exam_schedule():
     throw_if_invalid_username_password(user_name, passwd)
 
     async with aiohttp.ClientSession() as sess:
-        user_name = await generate_session(user_name, passwd, sess)
+        user_name, crsf_token = await generate_session(user_name, passwd, sess)
         if user_name is None:
             raise InvalidCredentialsException(status_code=UNAUTHORIZED_STATUS_CODE)
-        all_detials, is_valid = await get_exam_schedule(sess, user_name)
+        all_detials, _ = await get_exam_schedule(sess, user_name, crsf_token)
 
     return jsonify(all_detials), 200
 
