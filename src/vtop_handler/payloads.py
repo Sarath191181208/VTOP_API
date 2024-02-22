@@ -38,9 +38,9 @@ def get_academic_profile_payload(username: str, csrf_token: str):
 
 
 def get_exam_schedule_payload(username,
-                              semId):
+                              semId, crsf_token: str):
     return {"semesterSubId": semId,
-            "authorizedID": username}
+            "authorizedID": username, "_csrf": crsf_token}
 
 
 def get_course_page_semeseter_names_payload(auth_id):
