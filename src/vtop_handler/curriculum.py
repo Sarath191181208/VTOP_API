@@ -22,6 +22,7 @@ async def send_request(
     
 @may_throw
 async def get_curriculum_info(
-    sess: aiohttp.ClientSession, roll_no: str) -> CurriculumInfo:
-    payload = get_my_curriculum_payload(roll_no)
+    sess: aiohttp.ClientSession, roll_no: str, csrf_token: str) -> CurriculumInfo:
+    payload = get_my_curriculum_payload(roll_no, csrf_token)
     return await send_request(sess, CURRICULUM_PAGE_URL, payload, get_curriculum)
+
