@@ -7,7 +7,7 @@ from .parsers import parse_course_page_semester_names, parse_course_names_values
 from .utils import may_throw
 
 @may_throw
-async def get_course_semesters_list(sess: aiohttp.ClientSession, auth_id: str) -> Dict[str, str]:
+async def get_course_semesters_list(sess: aiohttp.ClientSession, auth_id: str, crsf_token: str) -> Dict[str, str]:
     """
         Return a dict of all the text of the option element inturn the semester names
 
@@ -21,7 +21,7 @@ async def get_course_semesters_list(sess: aiohttp.ClientSession, auth_id: str) -
     """
 
     return_data = {}
-    payload = get_course_page_semeseter_names_payload(auth_id)
+    payload = get_course_page_semeseter_names_payload(auth_id, crsf_token)
     async with sess.post(COURSE_PAGE_URL, data=payload, headers=HEADERS) as resp:
         html = await resp.text()
         return_data = parse_course_page_semester_names(html)
