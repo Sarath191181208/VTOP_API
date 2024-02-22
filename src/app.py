@@ -227,44 +227,6 @@ async def fetch_marks():
         marks_dict = await get_marks_dict(sess, roll_no, sem_id)
     return jsonify(marks_dict), 200
 
-
-@app.route("/download_")
-# @app.route('/download_class_materials', methods=["GET"])
-# @may_throw
-# @is_cookie_present
-# async def download_class_materials():
-#     raise_if_not_args_passed(request.args, "download_suffix", "auth_id")
-#     download_suffix = request.args.get("download_suffix")
-#     auth_id = request.args.get("auth_id")
-#     download_link = f"https://vtop2.vitap.ac.in/vtop/{download_suffix}?authorizedID={auth_id}&x={get_curr_time_vtop_format()}"
-#     cookies = {
-#         'JSESSIONID': session.get("cookie"),
-#         "loginUserType": "vtopuser"
-#     }
-#     async with aiohttp.ClientSession(cookies=cookies) as sess:
-#         async with sess.get(download_link) as resp:
-#             if resp.status != 200:
-#                 print(resp.status)
-#                 raise BadRequestException(
-#                     "Something went wrong while downloading the file!")
-#             file_name = (resp.headers.get("Content-Disposition", "")
-#                          .split("filename=")[1]
-#                          .replace('"', ''))
-#             return send_file(BytesIO(await resp.read()), attachment_filename=file_name, as_attachment=True, download_name=file_name)
-# return await resp.read(), 200, {"Content-Disposition": f"attachment; filename={file_name}"}
-
-
-@app.route("/api/v1/get_curriculum", methods=["POST"])
-@is_logged_in
-@may_throw
-async def get_curriculum() -> Tuple[Response, int]:
-    raise_if_not_args_passed(request.form, "roll_no")
-    auth_id = request.form["roll_no"]
-    cookies = get_cookies(session.get("cookie"))
-    async with aiohttp.ClientSession(cookies=cookies) as sess:
-        curriculum = await get_curriculum_info(sess, auth_id)
-    return jsonify(curriculum.dict()), 200
-
 @app.route("/api/v2/get_curriculum", methods=["POST"])
 @may_throw
 async def get_curriculum2() -> Tuple[Response, int]:
