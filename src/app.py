@@ -143,7 +143,7 @@ async def login():
     session["auth_id"] = user_name
     session["crsf_token"] = crsf_token
 
-    response = make_response(jsonify({"cookie": cookie}), SUCCESS_STATUS_CODE)
+    response = make_response(jsonify({"cookie": cookie, "crsf_token": crsf_token}), SUCCESS_STATUS_CODE)
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response
 
