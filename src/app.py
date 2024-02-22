@@ -130,7 +130,7 @@ async def login():
     throw_if_invalid_username_password(user_name, passwd)
     # extract cookie from vtop
     async with aiohttp.ClientSession() as sess:
-        user_name = await generate_session(user_name, passwd, sess)
+        user_name, crsf_token = await generate_session(user_name, passwd, sess)
         cookie = (
             sess.cookie_jar.filter_cookies("https://vtop2.vitap.ac.in/vtop")
             .get("JSESSIONID")
@@ -141,6 +141,7 @@ async def login():
 
     session["cookie"] = cookie
     session["auth_id"] = user_name
+    session["crsf_token"] = crsf_token
 
     response = make_response(jsonify({"cookie": cookie}), SUCCESS_STATUS_CODE)
     response.headers["Access-Control-Allow-Origin"] = "*"
@@ -152,6 +153,7 @@ async def clear_coookies():
     if "cookie" in session:
         session.pop("cookie")
         session.pop("auth_id")
+        session.pop("crsf_token")
     return jsonify(None)
 
 
@@ -161,9 +163,12 @@ async def clear_coookies():
 async def get_semester_names_codes():
     raise_if_not_args_passed(request.form, "auth_id")
     auth_id = request.form["auth_id"]
+    crsf_token = request.form.get("csrf_token", session.get("crsf_token"))
+    if crsf_token is None:
+        raise BadRequestException("You must provide csrf_token to access this route!")
     cookies = {"JSESSIONID": session.get("cookie"), "loginUserType": "vtopuser"}
     async with aiohttp.ClientSession(cookies=cookies) as sess:
-        semester_names_codes_dict = await get_course_semesters_list(sess, auth_id)
+        semester_names_codes_dict = await get_course_semesters_list(sess, auth_id, crsf_token)
 
     return jsonify(semester_names_codes_dict), 200
 
@@ -230,15 +235,16 @@ async def fetch_marks():
 @app.route("/api/v2/get_curriculum", methods=["POST"])
 @may_throw
 async def get_curriculum2() -> Tuple[Response, int]:
-    raise_if_not_args_passed(request.form, "roll_no", "cookie")
+    raise_if_not_args_passed(request.form, "roll_no", "cookie", "csrf_token")
     auth_id = request.form["roll_no"]
     cookie = request.form["cookie"]
+    token = request.form["csrf_token"]
     cookies = get_cookies(cookie)
     async with aiohttp.ClientSession(cookies=cookies) as sess:
-        curriculum = await get_curriculum_info(sess, auth_id)
+        curriculum = await get_curriculum_info(sess, auth_id, token)
     response = make_response(jsonify(curriculum.dict()), SUCCESS_STATUS_CODE)
     response.headers["Access-Control-Allow-Origin"] = "*"
-    return response
+    return response, SUCCESS_STATUS_CODE
 
 
 @app.route("/api/v1/faculty", methods=["POST"])
