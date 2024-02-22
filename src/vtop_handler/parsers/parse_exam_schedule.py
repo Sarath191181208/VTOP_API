@@ -14,10 +14,10 @@ def get_exam_row_data(row):
         "Exam Date": row[6],
         "Reporting Time": row[8],
         "Exam Time": row[9],
-        "Venue Block":  null_if_dash(row[10]),
-        "Venue Room":   null_if_dash(row[11]),
-        "Seat Location": null_if_dash(row[12]),
-        "Seat No":      null_if_dash(row[13]),
+        "Venue Block":  null_if_dash(row[10].split("-")[0]),
+        "Venue Room":   null_if_dash(row[10].split("-")[1]),
+        "Seat Location": null_if_dash(row[11]),
+        "Seat No":      null_if_dash(row[12]),
     }
     #  connvert  NaN to None
     data = {k: None if pd.isna(v) else v for k, v in data.items()}
