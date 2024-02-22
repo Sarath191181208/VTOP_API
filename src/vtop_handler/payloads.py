@@ -93,10 +93,13 @@ def get_my_curriculum_payload(roll_no: str):
         "nocache": "@ (new Date().getTime())"
     }
 
-def generate_payload_attendance_for_subject(class_id: str,slot_name: str, auth_id: str):
+def generate_payload_attendance_for_subject(sem_sub_id: str, course_id: str, course_type: str, auth_id: str, crsf_token: str):
     return {
-        "classId": class_id,
-        "slotName": slot_name.replace("+", " "),
+        "_csrf": crsf_token,
+        "semesterSubId": sem_sub_id,
+        "registerNumber": auth_id,
+        "courseId": course_id,
+        "courseType": course_type,
         "authorizedID": auth_id,
         "x": get_curr_time_vtop_format()
     }

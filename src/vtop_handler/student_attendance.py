@@ -26,7 +26,7 @@ import asyncio
 import aiohttp
 from typing import Dict, List, Tuple, Union
 
-async def _get_attendance_from_payload(sess:aiohttp.ClientSession, payload: Dict, username: str) -> Tuple[dict, bool]:
+async def _get_attendance_from_payload(sess:aiohttp.ClientSession, payload: Dict, username: str, semID: str, crsf_token: str) -> Tuple[dict, bool]:
     """
         Returns the attendance of the user in the form of a dictionary using the payload given
         which is mentioned above in the file containing this function.
@@ -39,14 +39,17 @@ async def _get_attendance_from_payload(sess:aiohttp.ClientSession, payload: Dict
         attendance_html = await resp.text()
         if resp.status == 200:
             try: 
+                with open("./htmls/attd.html", 'w') as f:
+                    f.write(attendance_html)
+
                 attendance = parse_attendance(attendance_html)
             
                 # get the data for the subject ids 
                 tasks = [
                     asyncio.create_task(
                         get_single_subject_attendance(
-                    sess, username, attendance[slot].get("subjectId", None), slot))   
-                    for slot in attendance.keys()
+                    sess, username, subj.get("courseId", None), subj.get("courseShortType", None), semID, crsf_token ))   
+                    for subj in attendance.values()
                 ]
 
                 # wait for all the tasks to complete
@@ -66,7 +69,7 @@ async def _get_attendance_from_payload(sess:aiohttp.ClientSession, payload: Dict
     valid = False if attendance == {} else valid
     return (attendance, valid)
 
-async def get_attendance(sess, username, csrf_token: str, semesterID=None):
+async def get_attendance(sess, username, crsf_token: str, semesterID=None):
     """
         Returns the attendance of the user in the form of a dictionary.
         The dictionary is of the form 
@@ -106,8 +109,8 @@ async def get_attendance(sess, username, csrf_token: str, semesterID=None):
     valid = False
     attendance = {}
     for semID in set(SEM_IDS):
-        payload = get_attendance_payload(username, semID, csrf_token)
-        attendance, valid = await _get_attendance_from_payload(sess, payload, username)
+        payload = get_attendance_payload(username, semID, crsf_token)
+        attendance, valid = await _get_attendance_from_payload(sess, payload, username, semID, crsf_token)
         if valid:
             break
 
@@ -115,8 +118,10 @@ async def get_attendance(sess, username, csrf_token: str, semesterID=None):
 
 async def get_single_subject_attendance(sess: aiohttp.ClientSession, 
         username: str, 
-        subjectID: Union[str, None], 
-        slotName: str) -> List[Dict[str, str]]:
+        course_id: Union[str, None], 
+        course_type: Union[str, None],
+        sem_id: str,
+        crsf_token: str) -> List[Dict[str, str]]:
     """
         Returns the attendance of the user in the form of a dictionary.
         The dictionary is of the form 
@@ -142,7 +147,9 @@ async def get_single_subject_attendance(sess: aiohttp.ClientSession,
         ]
 
     """
-    if subjectID is None: return []
-    attd_payload = generate_payload_attendance_for_subject(subjectID, slotName, username)
+    if course_id is None: return []
+    if course_type is None: return [] 
+    attd_payload = generate_payload_attendance_for_subject(sem_id, course_id, course_type, username, crsf_token)
     async with sess.post(VTOP_SINGLE_SUBJECT_ATTENDANCE_URL, data=attd_payload, headers=HEADERS) as resp:
-        return parse_single_subject_attendance(await resp.text())
+        txt = await resp.text()
+        return parse_single_subject_attendance(txt)
