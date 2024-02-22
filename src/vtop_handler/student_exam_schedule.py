@@ -53,6 +53,7 @@ async def _get_exam_schedule_from_payload(sess:aiohttp.ClientSession, payload:di
 async def get_exam_schedule(
     sess: aiohttp.ClientSession, 
     username: str,
+    crsf_token: str,
     semesterID: Union[str, None] = None) -> Tuple[
         dict,  # exam schedule
         bool]: # valid i.e sucess of the session
@@ -86,7 +87,7 @@ async def get_exam_schedule(
     valid = False
     exam_sch = {}
     for semID in set(SEM_IDS):
-        payload = get_exam_schedule_payload(username, semID)
+        payload = get_exam_schedule_payload(username, semID, crsf_token)
         exam_sch, valid = await _get_exam_schedule_from_payload(sess, payload)
         if valid:
             break
