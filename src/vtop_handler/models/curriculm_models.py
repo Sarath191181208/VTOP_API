@@ -3,16 +3,10 @@ from pydantic import BaseModel
 
 
 class SingleCurriculumCourse(BaseModel):
-    basket_title: str
     code: str
     course_title: str
-    type: str
+    course_type: str
     credits: int
-    is_compulsory: bool
-    registration_status: bool
-    registered_semester: Union[str, None]
-    grade: Union[str, None]
-
 
 class CreditInfo(BaseModel):
     category: str

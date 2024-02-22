@@ -10,15 +10,14 @@ def _parse_programme_info_tables(table_df: pd.DataFrame
     courses = []
     for row in table_df.itertuples():
         course = SingleCurriculumCourse(
-            basket_title=row[2],
-            code=row[3],
-            course_title=row[4],
-            type=row[5],
-            credits=row[6],
-            is_compulsory=row[7] == "Compulsory",
-            registration_status=not pd.isna(row[8]),
-            registered_semester=row[9] if not pd.isna(row[9]) else None,
-            grade=row[10] if not pd.isna(row[10]) else None
+            code=row[2],
+            course_title=row[3],
+            course_type=row[4],
+            credits=row[10],
+            # is_compulsory=row[7] == "Compulsory",
+            # registration_status=not pd.isna(row[8]),
+            # registered_semester=row[9] if not pd.isna(row[9]) else None,
+            # grade=row[10] if not pd.isna(row[10]) else None
         )
         courses.append(course)
     return courses
