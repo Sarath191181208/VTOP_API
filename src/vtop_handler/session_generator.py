@@ -113,10 +113,6 @@ async def generate_session(username:str, password:str, sess:  aiohttp.ClientSess
             if error_text == "Invalid Captcha":
                 raise CaptchaFailure("Captcha can't be solved")
 
-        with open("htmls/post_login_html.html", "w") as f:
-            f.write(post_login_html)
-
-
         roll_no_ele = soup.find('span', {"class": "navbar-text text-light small fw-bold"})
         if roll_no_ele is None:
             raise InvalidCredentialsException(401)
