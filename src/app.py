@@ -8,6 +8,8 @@ import aiohttp
 import sys
 import os
 
+import json
+
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
@@ -79,6 +81,7 @@ async def all_details():
     user_name = request.form.get("username", None)
     passwd = request.form.get("password", None)
     throw_if_invalid_username_password(user_name, passwd)
+    print(user_name, passwd)
 
     if user_name is None or passwd is None:
         raise BadRequestException("You must provide username and password to access this route!")
@@ -96,7 +99,7 @@ async def all_details():
             k: (await d_future)[0] for k, d_future in all_details_futures.items()
         }
     # return jsonify(all_detials, ), 200
-    response = make_response(jsonify(all_detials), SUCCESS_STATUS_CODE)
+    response = make_response(json.dumps(all_detials, default=str), SUCCESS_STATUS_CODE)
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response
 
