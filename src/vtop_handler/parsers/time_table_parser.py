@@ -4,37 +4,23 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 
-def _get_course_code_dic(time_table_soup: BeautifulSoup) -> Dict[str, str]:
+def _get_course_code_dic(df) -> Dict[str, str]:
     """ creating a dictionary of course code and course name ex: 
         {
             "ECE4008": "Computer Communication",
             "ECE4015": "Data Structures",
         }
     """
-
-    course_labels_soup = time_table_soup.find_all(
-        'td', {'style': lambda s: 'padding: 3px; font-size: 12px; border-color: #b2b2b2;vertical-align: middle;' in s})
-    # getting the course data i.e the course column in the first table
-    course_labels = [i.getText().split("-") for i in course_labels_soup]
-
-    # only taking the first two items i.e course code and course name ex: cse-101 and Computer Science
-    def _get_course_code(
-        course_label): return course_label[0].strip()  # helper function
-    def _get_course_name(course_label): return " ".join(  # helper function
-        [name.strip() for name in course_label[1:-1]])
-    # creating a dictionary of course code and course name
-    course_code_name_dic = {_get_course_code(course_label): _get_course_name(course_label)
-                            for course_label in course_labels}
-
-    return course_code_name_dic
+    _df = df[0]
+    _df[["Course Code","Course Name"]] = _df['Course'].str.split('-', n=1, expand=True)
+    _df["Course Code"] = _df["Course Code"].str.strip()
+    _df["Course Name"] = _df["Course Name"].str.strip()
+    return dict(_df[["Course Code", "Course Name"]].to_dict("split")["data"])
+ 
 
 
 def parse_timetable(timetable_html: str) -> Dict[str, List]:
     """takes the html of the timetable and returns the timetable in the form of a dictionary"""
-
-    soup = BeautifulSoup(timetable_html, 'lxml')
-    course_code_name_dic = _get_course_code_dic(time_table_soup=soup)
-
     def _get_vals(s):  # temporary helper function
         """ gets the solt course code and class name for a row """
         temp_arr = str(s).strip().split("-")
@@ -53,6 +39,8 @@ def parse_timetable(timetable_html: str) -> Dict[str, List]:
     # for the time table we have two tables one's with the course lectures and the other with the scheduled classes
     raw_df = pd.read_html(timetable_html)
     df = raw_df[1]
+
+    course_code_name_dic = _get_course_code_dic(raw_df[0])
 
     # iterating over the rows of the table and converting to json format
     for row_idx in range(3, df.shape[0]):
